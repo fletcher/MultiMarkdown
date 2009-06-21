@@ -156,64 +156,51 @@ If you questions are specific to Scrivener, you can also browse the Literate and
 
 Quick start instructions, for those in a hurry...
 
-## General Instructions ##
+
+# General Instructions #
 
 1. Download the MultiMarkdown package:
 
-    <http://files.fletcherpenney.net/MultiMarkdown.zip>
+    <http://fletcher.github.com/MultiMarkdown/>
 
-2. Unzip it
+2. Unzip/untar it
 
-3. In the "bin" directory, there are a couple of perl scripts designed to take a MultiMarkdown text file and convert to XHTML, RTF, or LaTeX:
+3. MultiMarkdown can be run from anywhere, but is easiest when installed in a "common" location:
 
-	* multimarkdown2XHTML.pl
+	* Windows:
+		
+		* C:\Documents and Settings\All Users\MultiMarkdown
+		* C:\Documents and Settings\&lt;user>\MultiMarkdown
+	
+	* Mac OS X or *nix
+	
+		* ~/Library/Application Support/MultiMarkdown (preferred on Mac OS X)
+		* ~/.multimarkdown
+		* /Library/Application Support/MultiMarkdown (preferred on Mac OS X)
+		* /usr/share/multimarkdown
 
-	* multimarkdown2latex.pl
+4. In the "bin" directory, there are a couple of perl scripts designed to take a MultiMarkdown text file and convert to XHTML, or LaTeX, or pdf.  These scripts are designed to be able to be run from anywhere.  You can leave them where they are, or install them somewhere in your path directory:
 
-	* multimarkdown2RTF.pl
+	* mmd2XHTML.pl
 
-4. To use these files, do something like the following:
+	* mmd2LaTeX.pl
+
+	* mmd2PDF.pl
+
+	* mmd2PDFXeLaTeX.pl
+
+	* mmd2letter.pl
+
+
+5. To use these files, do something like the following:
 
 		cd MultiMarkdown
-		bin/multimarkdown2XHTML.pl file.txt > file.html
+		bin/mmd2XHTML.pl file.txt
 
-	where "file.txt" is the MultiMarkdown file you wish to process.
+	where "file.txt" is the MultiMarkdown file you wish to process.  "file.html" will be created automatically
 
-5. You can now open `file.html` in your web browser, or do what you like with it.
+6. You can now open `file.html` in your web browser, or do what you like with it.
 
-## "Common Installation" Instructions for OS X ##
-
-
-1. Download the MultiMarkdown package:
-
-	<http://files.fletcherpenney.net/MultiMarkdown.zip>
-
-2. Unzip the file
-
-3. Move the unzipped directory to the appropriate place:
-
-	* `/Library/Application Support/MultiMarkdown`
-	* `~/Library/Application Support/MultiMarkdown`
-
-4. Use your application as usual (e.g. [TextMate][], [Scrivener][], the MultiMarkdown [Drag and Drop](http://fletcherpenney.net/MultiMarkdown_Drag_and_Drop) utilities)
-
-## Command-Line Shortcuts ##
-
-
-* The perl scripts above look for certain utility files in certain places. It
-  is important to preserve the directory structure of the various files
-  included in the MultiMarkdown package.
-
-* Because of this, symlinks don't seem to work well. Aliases do, however. For
-  example, in tcsh, you can add the following to your .tcshrc file (similar
-  features should exist for other shells)
-
-		alias mmd '/Path/To/MultiMarkdown/bin/multimarkdown2XHTML.pl'
-		alias mmd2tex '/Path/To/MultiMarkdown/bin/multimarkdown2latex.pl'
-
-	Then, you could do something like this:
-
-		mmd file.txt > file.html
 
 [TextMate]:		http://macromates.com/
 [Scrivener]:	http://www.literatureandlatte.com/scrivener.html
