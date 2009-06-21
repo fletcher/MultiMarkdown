@@ -32,7 +32,7 @@ sub ProcessMMD2XHTML {
 	$text .= shift;
 	
 	my $output_file = "";
-	$output_file = _Input2Output($input_file, "xhtml") if ($input_file ne "");
+	$output_file = _Input2Output($input_file, "html") if ($input_file ne "");
 	
 	my $SmartyPants = _WhichSmarty($text);
 	my $xslt_file = _XhtmlXSLT($text);
