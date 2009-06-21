@@ -33,7 +33,6 @@ require 5.006_000;
 use strict;
 use warnings;
 
-# Include ASCIIMathML.pm
 
 eval {require MT};  # Test to see if we're running in MT.
 unless ($@) {
@@ -1909,7 +1908,7 @@ sub xhtmlMetaData {
 	# This screws up xsltproc - make sure to use `-nonet -novalid` if you
 	#	have difficulty
 	if ($g_allow_mathml) {
-		 $result .= qq{<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"\n\t"http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd">
+		 $result .= qq{<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"\n\t"http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
 \n};
 	
 		$result.= qq{<html xmlns="http://www.w3.org/1999/xhtml">\n\t<head>\n};
