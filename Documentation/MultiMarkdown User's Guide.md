@@ -1588,6 +1588,7 @@ improving Markdown and MultiMarkdown:
 *	Dan Rolander
 *	Duoyi wu
 *	Dan Dascalescu
+*	Ingolf Schäfer
 
 and others I have surely forgotten....
 
