@@ -69,9 +69,9 @@ if ($count == 0) {
 			my $xslt = MultiMarkdown::Support::_LatexXSLT($data);
 			if ($xslt =~ s/letterhead/envelope/) {
 				$data = "latex xslt: $xslt\n" . $data;
-				$output =~ s/\.pdf$/-envelope.pdf/;
+				$filename =~ s/\.txt$/-envelope.pdf/;
 
-				MultiMarkdown::Support::ProcessMMD2PDFXeLaTeX($MMDPath, $output, $data);
+				MultiMarkdown::Support::ProcessMMD2PDFXeLaTeX($MMDPath, $filename, $data);
 			}
 		} else {
 			system("perldoc $0");
