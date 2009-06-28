@@ -20,7 +20,7 @@ foreach(@ARGV) {
 	open(INPUT, "<$_");
 
 	while ($line = <INPUT>) {
-		if ($line !~ /^\s*$/) {
+		if (($line !~ /^\s*$/) && ($line !~ /^\#/)) {
 			$line =~ s/ {4}/\t/g;
 			$line =~ s/\s*$//;
 			my $indent = ($line =~ tr/\t/\t/);
