@@ -61,8 +61,10 @@ This script is designed to allow you to use different files to store parts of
 a larger MultiMarkdown document, making it easier to reorganize the document
 if you so desire. Each line consists of the url or filename of the next
 document. If the line is indented, each tab (or 4 spaces) will increase the
-header level of the document by 1 (similar to the `Base Header Level` metadata).
-
+header level of the document by 1 (similar to the `Base Header Level`
+metadata). Blank lines are ignored. Lines starting with `#` are treated as
+comments. Only metadata from the first file would be properly handles, since
+it would be the only metadata at the top of the new "virtual" document.
 
 =head1 SEE ALSO
 
