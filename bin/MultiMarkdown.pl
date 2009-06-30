@@ -33,6 +33,7 @@ require 5.006_000;
 use strict;
 use warnings;
 
+use File::Basename;
 
 eval {require MT};  # Test to see if we're running in MT.
 unless ($@) {
@@ -43,10 +44,11 @@ unless ($@) {
 	# Am I running in Windoze?
 	my $os = $^O;
 
+	# Get just the directory portion
 	if ($os =~ /MSWin/) {
-		$me =~ s/\\([^\\]*?)$/\\/;	# Get just the directory portion
+		$me = dirname($me) . "\\";
 	} else {
-		$me =~ s/\/([^\/]*?)$/\//;	# Get just the directory portion	
+		$me = dirname($me) . "/"; 
 	}
 	require $me ."ASCIIMathML.pm";
 }
