@@ -321,10 +321,15 @@ sub Markdown {
 	%g_titles = ();
 	%g_html_blocks = ();
 	%g_metadata = ();
+	%g_metadata_newline = ();
 	%g_crossrefs = ();
 	%g_footnotes = ();
 	@g_used_footnotes = ();
+	$g_footnote_counter = 0;
 	@g_used_references = ();
+	%g_references = ();
+	$g_citation_counter = 0;
+	%g_attributes = ();
 
 
 	# Standardize line endings:
