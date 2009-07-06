@@ -18,10 +18,11 @@ Keywords:			Markdown
 					RTF  
 					TextMate  
 Version:			2.0.b6
-Revision:			$Id: MultiMarkdown User's Guide.md 525 2009-06-15 18:45:44Z fletcher $
 Base Header Level:	2
 CSS:				http://fletcherpenney.net/document.css
 XHTML XSLT:			xhtml-toc-h2.xslt
+
+
 
 # Introduction to MultiMarkdown #
 
@@ -35,7 +36,7 @@ what MultiMarkdown was designed to be used for!
 [MultiMarkdown]:	http://fletcherpenney.net/MultiMarkdown
 [Scrivener]:		http://www.literatureandlatte.com/scrivener.html
 
-## What is Markdown? ##
+## What is Markdown? #
 
 To understand what MultiMarkdown is, you first should be familiar with
 [Markdown](http://daringfireball.net/projects/markdown/ "Daring Fireball:
@@ -65,7 +66,9 @@ Markdown web site:
 [#Gruber]: Daring Fireball: Markdown.  
 <http://daringfireball.net/projects/markdown/>
 
-## What is MultiMarkdown? ##
+## What is MultiMarkdown? #
+
+
 
 Markdown is great, but it lacked a few features that would allow it to work
 with documents, rather than just pieces of a web page.
@@ -100,7 +103,8 @@ as:
 
 [PHP Markdown Extra]: http://www.michelf.com/projects/php-markdown/extra/
 
-## How do I use MultiMarkdown? ##
+## How do I use MultiMarkdown? #
+
 
 You can use MultiMarkdown in a variety of ways:
 
@@ -117,10 +121,11 @@ You can use MultiMarkdown in a variety of ways:
 
 [TextMate]:		http://macromates.com/
 [Scrivener]:	http://www.literatureandlatte.com/scrivener.html
-[blosxom]:		http://blosxom.sourceforge.net
-[Oddmuse]:		http://oddmuse.org/ "Oddmuse"
+[blosxom]:		http://blosxom.sourceforge.net "blosxom"
+[Oddmuse]:		http://www.oddmuse.org/ "Oddmuse Homepage"
 
-## Where can I find MultiMarkdown? ##
+## Where can I find MultiMarkdown? #
+
 
 The MultiMarkdown package can be downloaded:
 
@@ -139,7 +144,8 @@ Michel Fortin's PHP version of Markdown is at his site:
 * <http://www.michelf.com/projects/php-markdown/>
 
 
-## Where can I get more information about MultiMarkdown?##
+## Where can I get more information about MultiMarkdown? #
+
 
 As above, check my web site.
 
@@ -157,7 +163,7 @@ If you questions are specific to Scrivener, you can also browse the Literate and
 Quick start instructions, for those in a hurry...
 
 
-# General Instructions #
+## General Instructions ##
 
 1. Download the MultiMarkdown package:
 
@@ -204,6 +210,8 @@ Quick start instructions, for those in a hurry...
 
 [TextMate]:		http://macromates.com/
 [Scrivener]:	http://www.literatureandlatte.com/scrivener.html
+
+
 
 # MultiMarkdown Syntax Guide #
 
@@ -1162,6 +1170,7 @@ resulting LaTeX will be totally valid.
 
 [TeXShop]: http://www.uoregon.edu/~koch/texshop/ "TeXShop Homepage"
 
+
 # Advanced Features and Customization #
 
 I believe that MultiMarkdown works pretty well "out of the box" for the vast
@@ -1310,6 +1319,21 @@ for MultiMarkdown, that can make it even easier to create your output
 documents.
 
 If you know of something not included here, please let me know.
+
+
+## Movable Type ##
+
+MultiMarkdown can be used with Movable Type.  To install:
+
+1. Place `MultiMarkdown.pl` in the `mt/plugins/Markdown` directory
+2. Copy `ASCIIMathML.pm` into the same directory
+3. Make sure `SmartyPants.pl` is also there
+
+Now MultiMarkdown should be working with Movable Type. For some reason,
+however, it seems somewhat temperamental at times. I haven't been able to
+figure out why, but it works for me on my local machine and on my host's
+server. It has also worked for other users.
+
 
 ## MultiMarkdown Drag and Drop ##
 
@@ -1475,6 +1499,7 @@ usually find an easy way to incorporate MultiMarkdown into your own workflow.
 If you find something that you think should be added here, let me know!
 
 
+
 # Technical Issues #
 
 The MultiMarkdown system is actually a fairly complex group of programs, which
@@ -1576,8 +1601,12 @@ improving Markdown and MultiMarkdown:
 *	Duoyi wu
 *	Dan Dascalescu
 *	Ingolf Schäfer
+*	Chris Bunch
+*	Oblomov
 
 and others I have surely forgotten....
+
+
 
 # Known Issues #
 
@@ -1615,6 +1644,8 @@ and others I have surely forgotten....
   footnote comes from.... Any help in tracking this down would be appreciated,
   as it didn't used to do this.
 
+
+
 # Things to Do #
 
 * Add a syntax to allow comments that can be stripped before passing the
@@ -1646,6 +1677,7 @@ and others I have surely forgotten....
 * Consider whether to incorporate the definition list syntax into a footnote
   to specify a glossary entry (or perhaps even without the footnote), or
   whether to leave well enough alone.
+
 
 # Version History #
 
@@ -1827,9 +1859,3 @@ and others I have surely forgotten....
 
 * 1.0.1M - initial release
 
-
-
-
-[Markdown]: http://daringfireball.net/projects/markdown/ "Markdown"
-[blosxom]:	http://www.blosxom.com/ "Blosxom"
-[Oddmuse]:	http://oddmuse.org/ "Oddmuse"
