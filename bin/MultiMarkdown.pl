@@ -1792,7 +1792,7 @@ sub _StripFootnoteDefinitions {
 	my $less_than_tab = $g_tab_width - 1;
 
 	while ($text =~ s{
-		\n\[\^([^\n]+?)\]\:[ \t]*# id = $1
+		\n[ ]{0,$less_than_tab}\[\^([^\n]+?)\]\:[ \t]*# id = $1
 		\n?
 		(.*?)\n{1,2}		# end at new paragraph
 		((?=\n[ ]{0,$less_than_tab}\S)|\Z)	# Lookahead for non-space at line-start, or end of doc
