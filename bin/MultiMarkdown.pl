@@ -1740,12 +1740,14 @@ sub _ParseMetaData {
 	my ($inMetaData, $currentKey) = (1,'');
 	
 	foreach my $line ( split /\n/, $text ) {
-		$line =~ /^$/ and $inMetaData = 0 and $clean_text .= $line and next;
+		$line =~ /^$/ and $inMetaData = 0;
 		if ($inMetaData) {
 			if ($line =~ /^([a-zA-Z0-9][0-9a-zA-Z _-]*?):\s*(.*)$/ ) {
 				$currentKey = $1;
-				$currentKey =~ s/  / /g;
-				$g_metadata{$currentKey} = $2;
+				my $meta = $2;
+				$currentKey =~ s/\s+/ /g;
+				$currentKey =~ s/\s$//;
+				$g_metadata{$currentKey} = $meta;
 				if (lc($currentKey) eq "format") {
 					$g_document_format = lc($g_metadata{$currentKey});
 				}
