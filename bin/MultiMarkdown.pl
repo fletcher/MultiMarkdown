@@ -346,9 +346,6 @@ sub Markdown {
 	# match consecutive blank lines with /\n+/ instead of something
 	# contorted like /[ \t]*\n+/ .
 	$text =~ s/^[ \t]+$//mg;
-
-	# Strip leading blank lines
-	$text =~ s/^\n+//s;
 	
 	# Strip out MetaData
 	$text = _ParseMetaData($text) if $g_use_metadata;
