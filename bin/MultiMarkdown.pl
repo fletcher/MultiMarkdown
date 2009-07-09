@@ -453,6 +453,14 @@ sub _StripLinkDefinitions {
 	return $text;
 }
 
+sub _StripHTML {
+	# Strip (X)HTML code from string
+	my $text = shift;
+	
+	$text =~ s/<.*?>//g;
+	
+	return $text;
+}
 
 sub _HashHTMLBlocks {
 	my $text = shift;
@@ -1012,7 +1020,7 @@ sub _DoHeaders {
 		
 		if ($label ne "") {
 			$g_crossrefs{$label} = "#$label";
-			$g_titles{$label} = $header;
+			$g_titles{$label} = _StripHTML($header);
 			$idString = " id=\"$label\"";			
 		} else {
 			$idString = "";
@@ -1033,7 +1041,7 @@ sub _DoHeaders {
 		
 		if ($label ne "") {
 			$g_crossrefs{$label} = "#$label";
-			$g_titles{$label} = $header;
+			$g_titles{$label} = _StripHTML($header);
 			$idString = " id=\"$label\"";			
 		} else {
 			$idString = "";
@@ -1073,7 +1081,7 @@ sub _DoHeaders {
 			
 			if ($label ne "") {
 				$g_crossrefs{$label} = "#$label";
-				$g_titles{$label} = $header;
+				$g_titles{$label} = _StripHTML($header);
 				$idString = " id=\"$label\"";			
 			} else {
 				$idString = "";
