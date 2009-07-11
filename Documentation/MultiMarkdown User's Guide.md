@@ -408,6 +408,10 @@ to conversion to RTF. Useful for further customizing the output of
 MultiMarkdown specifically for the RTF format. I have no plans to create any
 such files myself, but others may find it useful.
 
+*I strongly encourage you to use another route to convert XHTML to RTF.  
+I've had the best results with [Google Docs](htts://docs.google.com/).  For 
+non-Mac users, that definitely the way to go.*
+
 ### Subtitle ###
 
 Used to provide a subtitle. It ends up in the meta tags, but can be extracted
@@ -1426,14 +1430,11 @@ format metadata, lists, tables, headers, etc. It can clean up the text to make
 it look as presentable as possible in plain text, and it can then
 automatically convert your text into XHTML, RTF, Word, or LaTeX/PDF.
 
-My TextMate Bundle is available on my web site:
+I have subsequently rewritten this bundle as a fork of the original on github.
+This should make it easier to incorporate changes, and possibly to merge the
+two projects into a single bundle.
 
-* <http://fletcher.freeshell.org/wiki/MultiMarkdownTextMateBundle>
-
-It is designed to play nicely with the default Markdown Bundle, so you can
-have them both installed. You may wish to disable a few features from the
-original bundle, but that is totally up to you.
-
+* <http://fletcher.github.com/markdown.tmbundle/>
 
 
 [#macromates]: TextMate --- The Missing Editor for Mac OS X.  
@@ -1603,6 +1604,9 @@ improving Markdown and MultiMarkdown:
 *	Ingolf Schäfer
 *	Chris Bunch
 *	Oblomov
+*	Alex Melhuish
+*	Stephan Mueller
+*	Josh Brown
 
 and others I have surely forgotten....
 
@@ -1621,10 +1625,6 @@ and others I have surely forgotten....
   sure what to do - varwidth is incompatible with xcolor and is not a standard
   package. Suggestions welcome.
 
-* You need to use the newest version of xsltproc if you want to make best use
-  of the XSLT features (such as LaTeX formatting.) The version Apple includes
-  does not support the `last()` function and can cause problems.
-
 * Creating a link to an image by label doesn't work properly anymore
 
 * I'm having difficulty with getting the glossary feature to work in the
@@ -1632,18 +1632,23 @@ and others I have surely forgotten....
   out there can point out what I'm doing wrong, let me know.
 
 * RTF support currently only exists for Mac OS X. Conversion from XHTML to RTF
-  happens via Apples `textutil` tool. It is possible to write an XSLT file
-  that converts from XHTML to RTF, but I have little to no interest in writing
-  this myself, as I don't really use the RTF format very often. If someone
-  were interested in developing this, I would help out. An added benefit would
-  be that the XSLT could actually do a better job than Apple's tool in terms
-  of footnote support and internal links.  Contact me if you're interested.
+  happens via Apples `textutil` tool. It is possible to write an XSLT file 
+  that converts from XHTML to RTF, but I have little to no interest in 
+  writing this myself, as I don't really use the RTF format very often. If 
+  someone were interested in developing this, I would help out. An added 
+  benefit would be that the XSLT could actually do a better job than Apple's 
+  tool in terms of footnote support and internal links.  Contact me if 
+  you're interested. In the meantime, I suggest using [Google Docs][] to 
+  import the XHTML file, and then export as an RTF.  It does a much better 
+  job.
 
 * The sample MMD file creates two copies of the footnote in the `MultiMarkdown
   vs. Crayons` table, even though I only call for one. Not sure where the `a`
   footnote comes from.... Any help in tracking this down would be appreciated,
   as it didn't used to do this.
 
+
+[Google Docs]: http://docs.google.com/
 
 
 # Things to Do #
