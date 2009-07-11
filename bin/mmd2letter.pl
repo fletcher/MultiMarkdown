@@ -106,7 +106,7 @@ sub LocateMMD {
 	} else {
 		# We're running Mac OS X or some *nix
 		
-		# First, look in user's home directory, then in commond directories
+		# First, look in user's home directory, then in common directories
 
 		if ( -d "$ENV{HOME}/Library/Application Support/MultiMarkdown") {
 			$MMDPath = "$ENV{HOME}/Library/Application Support/MultiMarkdown";
