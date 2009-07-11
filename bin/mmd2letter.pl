@@ -108,16 +108,21 @@ sub LocateMMD {
 		
 		# First, look in user's home directory, then in common directories
 
-		if ( -d "$ENV{HOME}/Library/Application Support/MultiMarkdown") {
-			$MMDPath = "$ENV{HOME}/Library/Application Support/MultiMarkdown";
-		} elsif ( -d "$ENV{HOME}/.multimarkdown") {
-			$MMDPath = "$ENV{HOME}/.multimarkdown";
-		} elsif ( -d "/Library/Application Support/MultiMarkdown") {
-			$MMDPath = "/Library/Application Support/MultiMarkdown";
-		} elsif ( -d "/usr/share/multimarkdown") {
-			$MMDPath = "/usr/share/multimarkdown";
-		} elsif ( -d "$me/../../../MultiMarkdown") {
-			$MMDPath = "$me/../..";
+		if (defined($ENV{HOME})) {
+			if ( -d "$ENV{HOME}/Library/Application Support/MultiMarkdown") {
+				$MMDPath = "$ENV{HOME}/Library/Application Support/MultiMarkdown";
+			} elsif ( -d "$ENV{HOME}/.multimarkdown") {
+				$MMDPath = "$ENV{HOME}/.multimarkdown";	
+			}		
+		}
+		if ($MMDPath eq "") {
+			if ( -d "/Library/Application Support/MultiMarkdown") {
+				$MMDPath = "/Library/Application Support/MultiMarkdown";
+			} elsif ( -d "/usr/share/multimarkdown") {
+				$MMDPath = "/usr/share/multimarkdown";
+			} elsif ( -f "$me/MultiMarkdown.pl") {
+				$MMDPath = "$me/..";
+			}			
 		}
 		# Load the MultiMarkdown::Support.pm module
 		do "$MMDPath/bin/MultiMarkdown/Support.pm" if ($MMDPath ne "");
