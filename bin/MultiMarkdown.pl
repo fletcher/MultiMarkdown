@@ -1862,7 +1862,7 @@ sub _PrintFootnotes{
 		$footnote =~ s/(\<\/(p(re)?|ol|ul)\>)$//;
 		$footnote_closing_tag = $1;
 		
-		if ($footnote =~ s/^glossary:\s*//i) {
+		if ($footnote =~ s/^(<p>)?glossary:\s*//i) {
 			# Add some formatting for glossary entries
 
 			$footnote =~ s{
