@@ -512,9 +512,9 @@
 </xsl:text>
 	</xsl:template>
 
-		<xsl:template match="html:p[last()]" mode="glossary">
-			<xsl:apply-templates select="node()"/>
-		</xsl:template>
+	<xsl:template match="html:p[last()]" mode="glossary">
+		<xsl:apply-templates select="node()"/>
+	</xsl:template>
 	
 	<!-- use these when asked for -->
 	<xsl:template match="html:span[@class='glossary name']" mode="glossary">
