@@ -93,12 +93,19 @@ sub LocateMMD {
 	if ($os =~ /MSWin/) {
 		# We're running Windows
 	
-		if ( -d "$ENV{HOMEDRIVE}$ENV{HOMEPATH}\\MultiMarkdown") {
-			$MMDPath = "$ENV{HOMEDRIVE}$ENV{HOMEPATH}\\MultiMarkdown";
-		} elsif ( -d "$ENV{HOMEDRIVE}\\Documents and Settings\\All Users\\MultiMarkdown") {
-			$MMDPath = "$ENV{HOMEDRIVE}\\Documents and Settings\\All Users\\MultiMarkdown";
-		} elsif ( -d "$me\\..\\..\\MultiMarkdown") {
+		# First check our directory to see if we're running inside MMD
+		
+		if ( -f "$me\\MultiMarkdown\\Support.pm") {
 			$MMDPath = "$me\\..";
+		}
+		
+		# Next, look in user's home directory, then in common directories
+		if ($MMDPath eq "") {
+			if ( -d "$ENV{HOMEDRIVE}$ENV{HOMEPATH}\\MultiMarkdown") {
+				$MMDPath = "$ENV{HOMEDRIVE}$ENV{HOMEPATH}\\MultiMarkdown";
+			} elsif ( -d "$ENV{HOMEDRIVE}\\Documents and Settings\\All Users\\MultiMarkdown") {
+				$MMDPath = "$ENV{HOMEDRIVE}\\Documents and Settings\\All Users\\MultiMarkdown";
+			}
 		}
 
 		# Load the MultiMarkdown::Support.pm module
@@ -106,30 +113,37 @@ sub LocateMMD {
 	} else {
 		# We're running Mac OS X or some *nix
 		
-		# First, look in user's home directory, then in common directories
-
-		if (defined($ENV{HOME})) {
-			if ( -d "$ENV{HOME}/Library/Application Support/MultiMarkdown") {
-				$MMDPath = "$ENV{HOME}/Library/Application Support/MultiMarkdown";
-			} elsif ( -d "$ENV{HOME}/.multimarkdown") {
-				$MMDPath = "$ENV{HOME}/.multimarkdown";	
-			}		
+		# First check our directory to see if we're running inside MMD
+		
+		if ( -f "$me/MultiMarkdown/Support.pm") {
+			$MMDPath = "$me/..";
 		}
+		
+		# Next, look in user's home directory, then in common directories
 		if ($MMDPath eq "") {
-			if ( -d "/Library/Application Support/MultiMarkdown") {
-				$MMDPath = "/Library/Application Support/MultiMarkdown";
-			} elsif ( -d "/usr/share/multimarkdown") {
-				$MMDPath = "/usr/share/multimarkdown";
-			} elsif ( -f "$me/MultiMarkdown.pl") {
-				$MMDPath = "$me/..";
-			}			
+			if (defined($ENV{HOME})) {
+				if ( -d "$ENV{HOME}/Library/Application Support/MultiMarkdown") {
+					$MMDPath = "$ENV{HOME}/Library/Application Support/MultiMarkdown";
+				} elsif ( -d "$ENV{HOME}/.multimarkdown") {
+					$MMDPath = "$ENV{HOME}/.multimarkdown";	
+				}
+			}
+			if ($MMDPath eq "") {
+				if ( -d "/Library/Application Support/MultiMarkdown") {
+					$MMDPath = "/Library/Application Support/MultiMarkdown";
+				} elsif ( -d "/usr/share/multimarkdown") {
+					$MMDPath = "/usr/share/multimarkdown";
+				}
+			}
 		}
-		# Load the MultiMarkdown::Support.pm module
-		do "$MMDPath/bin/MultiMarkdown/Support.pm" if ($MMDPath ne "");
 	}
 
 	if ($MMDPath eq "") {
 		die "You do not appear to have MultiMarkdown installed.\n";
+	} else {
+		# Load the MultiMarkdown::Support.pm module
+		$MMDPath = abs_path($MMDPath);
+		do "$MMDPath/bin/MultiMarkdown/Support.pm";
 	}
 
 	# Clean up the path
