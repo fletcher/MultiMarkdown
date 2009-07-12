@@ -154,7 +154,7 @@ sub PDFEngine {
 		$temp_folder =~ s/\//\\/g;
 		$parent_folder =~ s/\\/\//g;
 		$temp_tex_file = "$temp_folder\\mmd.tex";
-		@support_files = <(""$parent_folder""\\*.{bib,pdf,png,gif,jpg}>;
+		@support_files = <'$parent_folder\\*.{bib,pdf,png,gif,jpg}'>;
 	} else {
 		# Not in Windows
 		$temp_tex_file = "$temp_folder/mmd.tex";
