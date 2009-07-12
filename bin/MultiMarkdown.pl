@@ -1829,7 +1829,7 @@ sub _DoFootnotes {
 		my $id = id2footnote($1);
 		if (defined $g_footnotes{$id} ) {
 			$g_footnote_counter++;
-			if ($g_footnotes{$id} =~ /^glossary:/i) {
+			if ($g_footnotes{$id} =~ /^(<p>)?glossary:/i) {
 				$result = "<a href=\"#fn:$id\" id=\"fnref:$id\" title=\"see glossary\" class=\"footnote glossary\">$g_footnote_counter</a>";
 			} else {
 				$result = "<a href=\"#fn:$id\" id=\"fnref:$id\" title=\"see footnote\" class=\"footnote\">$g_footnote_counter</a>";
