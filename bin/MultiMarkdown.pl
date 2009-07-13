@@ -2676,6 +2676,11 @@ B<MultiMarkdown.pl> [ B<--html4tags> ] [ B<--version> ] [ B<-shortversion> ]
 
 =head1 DESCRIPTION
 
+MultiMarkdown is an extended version of Markdown. See the website for more
+information.
+
+	http://fletcherpenney.net/multimarkdown/
+
 Markdown is a text-to-HTML filter; it translates an easy-to-read /
 easy-to-write structured text format into HTML. Markdown's text format
 is most similar to that of plain text email, and supports features such
@@ -2732,114 +2737,10 @@ Caveats section above) please send email to:
 
     support@daringfireball.net (for Markdown issues)
     
-    fletcher@fletcherpenney.net (for MultiMarkdown issues)
+    owner@fletcherpenney.net (for MultiMarkdown issues)
 
 Please include with your report: (1) the example input; (2) the output
-you expected; (3) the output Markdown actually produced.
-
-
-=head1 VERSION HISTORY
-
-See the readme file for detailed release notes for this version.
-
-1.0.2b8 - Wed 09 May 2007
-
-	+	Fixed bug with nested raw HTML tags that contained
-		attributes. The problem is that it uses a backreference in
-		the expression that it passes to gen_extract_tagged, which
-		is broken when Text::Balanced wraps it in parentheses.
-
-		Thanks to Matt Kraai for the patch.
-	
-	+	Now supports URLs containing literal parentheses, such as:
-	
-			http://en.wikipedia.org/wiki/WIMP_(computing)
-		
-		Such parentheses may be arbitrarily nested, but must be
-		balanced.
-
-
-1.0.2b7
-
-	+	Changed shebang line from "/usr/bin/perl" to "/usr/bin/env perl"
-	
-	+	Now only trim trailing newlines from code blocks, instead of trimming
-		all trailing whitespace characters.
-
-
-1.0.2b6 - Mon 03 Apr 2006
-
-	+	Fixed bad performance bug in new `Text::Balanced`-based block-level parser.
-
-
-1.0.2b5 - Thu 08 Dec 2005
-
-	+	Fixed bug where this:
-	
-			[text](http://m.com "title" )
-			
-		wasn't working as expected, because the parser wasn't allowing for spaces
-		before the closing paren.
-
-
-1.0.2b4 - Thu 08 Sep 2005
-
-	+	Filthy hack to support markdown='1' in div tags, because I need it
-		to write today's fireball.
-	
-	+	First crack at a new, smarter, block-level HTML parser.
-
-1.0.2b3 - Thu 28 Apr 2005
-
-	+	_DoAutoLinks() now supports the 'dict://' URL scheme.
-
-	+	PHP- and ASP-style processor instructions are now protected as
-		raw HTML blocks.
-
-			<? ... ?>
-			<% ... %>
-
-	+	Workarounds for regressions introduced with fix for "backticks within
-		tags" bug in 1.0.2b1. The fix is to allow `...` to be turned into
-		<code>...</code> within an HTML tag attribute, and then to turn
-		these spurious `<code>` tags back into literal backtick characters
-		in _EscapeSpecialCharsWithinTagAttributes().
-
-		The regression was caused because in the fix, we moved
-		_EscapeSpecialCharsWithinTagAttributes() ahead of _DoCodeSpans()
-		in _RunSpanGamut(), but that's no good. We need to process code
-		spans first, otherwise we can get tripped up by something like this:
-
-			`<test a="` content of attribute `">`
-
-
-1.0.2b2 - 20 Mar 2005
-
-	+	Fix for nested sub-lists in list-paragraph mode. Previously we got
-		a spurious extra level of `<p>` tags for something like this:
-
-			*	this
-
-				*	sub
-
-				that
-
-	+	Experimental support for [this] as a synonym for [this][].
-		(Note to self: No test yet for this.)
-		Be sure to test, e.g.: [permutations of this sort of [thing][].]
-
-
-1.0.2b1 - 28  Feb 2005
-
-	+	Fix for backticks within HTML tag: <span attr='`ticks`'>like this</span>
-
-	+	Fix for escaped backticks still triggering code spans:
-
-			There are two raw backticks here: \` and here: \`, not a code span
-
-1.0.1 - 14 Dec 2004
-
-1.0 - 28 Aug 2004
+you expected; (3) the output (Multi)Markdown actually produced.
 
 
 =head1 AUTHOR
