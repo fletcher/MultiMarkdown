@@ -52,7 +52,7 @@ BUGS
 
         support@daringfireball.net (for Markdown issues)
         
-    owner@fletcherpenney.net (for MultiMarkdown issues)
+        owner@fletcherpenney.net (for MultiMarkdown issues)
 
     Please include with your report: (1) the example input; (2) the output
     you expected; (3) the output (Multi)Markdown actually produced.
