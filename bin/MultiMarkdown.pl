@@ -2153,8 +2153,11 @@ sub _DoTables {
 		$table =~ s/\n($table_divider)\n(($table_rows)+)//s;
 
 		my $body = "";
-		my $alignment_string = $1;
- 		if (defined $2){
+		my $alignment_string = "";
+		if (defined $1){
+			$alignment_string = $1;
+		}
+		if (defined $2){
 			$body = $2;
 		}
 
