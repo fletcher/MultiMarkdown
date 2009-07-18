@@ -143,13 +143,22 @@ sub LocateMMD {
 	} else {
 		# Load the MultiMarkdown::Support.pm module
 		$MMDPath = abs_path($MMDPath);
-		do "$MMDPath/bin/MultiMarkdown/Support.pm";
+		LoadModule("$MMDPath/bin/MultiMarkdown/Support.pm");
 	}
 
 	# Clean up the path
 	$MMDPath = abs_path($MMDPath);
 
 	return $MMDPath;
+}
+
+sub LoadModule {
+	my $file = shift;
+	unless (my $return = eval `cat $file`) {
+		warn "couldn't parse $file: $@" if $@;
+		warn "couldn't do $file: $!" unless defined $return;
+		warn "couldn't run $file" unless $return;
+	}
 }
 
 =head1 NAME
