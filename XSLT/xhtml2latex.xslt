@@ -507,9 +507,11 @@
 	
 	<xsl:template match="html:p" mode="glossary">
 		<xsl:apply-templates select="node()"/>
-		<xsl:text>\\
-\vspace{24pt}
+		<xsl:if test="position()!= last()">
+			<xsl:text>\\
+\\
 </xsl:text>
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="html:p[last()]" mode="glossary">
