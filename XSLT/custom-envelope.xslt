@@ -53,10 +53,15 @@
 \def\defaultaddress{123 Fake St \\ Charleston, SC 29401 \\}
 \def\defaultweb{}
 
+% Define the fl ligature for linux compatibility
+\chardef\fl="FB02
+
 % Define Logo or something for upper left corner
-\def\coverlogo{\font\logo="Didot:mapping=tex-text" \logo
-fletcherpenney.\color{accent}net\color{black}
+\def\coverlogo{
+\font\logo="Didot:mapping=tex-text" at 24pt \logo
+\href{http://fletcherpenney.net/}{\fl etcherpenney.\color{accent}net\color{black}}
 }
+
 
 % Use my stylesheet
 \usepackage{fletcherpenney}
