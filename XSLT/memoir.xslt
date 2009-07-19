@@ -408,6 +408,7 @@
 	<!-- Memoir handles glossaries differently -->
 
 	<xsl:template match="html:li" mode="glossary">
+		<xsl:param name="footnoteId"/>
 		<xsl:if test="parent::html:ol/parent::html:div/@class = 'footnotes'">
 			<xsl:if test="concat('#',@id) = $footnoteId">
 				<xsl:apply-templates select="html:span[@class='glossary sort']" mode="glossary"/>
