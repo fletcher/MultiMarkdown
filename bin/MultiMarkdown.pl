@@ -18,11 +18,9 @@
 #
 #
 #	TODO: Change math mode delimiter?
-#	TODO: WikiWords inside of MMD links are converted to wiki links
 #	TODO: Still need to get the glossary working in non-memoir documents
 #	TODO: A mechanism to include arbitrary code (LaTeX, etc) without being "ugly"
 #	TODO: Look into discussion re: assigning classes to div's/span's on Markdown list.
-#	TODO: Should I just scrap the WikiWords feature to get rid of all the trouble it causes?
 #	TODO: Improve support for tables with long items and overall width in LaTeX
 #	TODO: Need a syntax for long table cells in MMD, even if no rowspan feature yet
 #	TODO: Create utilities to convert MMD tables to/from tab-delimited
@@ -55,7 +53,7 @@ unless ($@) {
 
 
 use Digest::MD5 qw(md5_hex);
-use vars qw($VERSION $g_use_metadata $g_use_wiki_links $g_base_url
+use vars qw($VERSION $g_use_metadata $g_base_url
 	$g_bibliography_title $g_allow_mathml $g_base_header_level $mathParser);
 $VERSION = '2.0.b6';
 
@@ -72,7 +70,7 @@ my $g_empty_element_suffix = " />";     # Change to ">" for HTML output
 my $g_tab_width = 4;
 my $g_allow_mathml = 1;
 my $g_base_header_level = 1;
-my $g_wikilinks_kill_switch = 1;		# WikiLinks may become deprecated; this is the first step
+this is the first step
 
 #
 # Globals:
@@ -131,15 +129,6 @@ $g_use_metadata = 1;
 $g_metadata_newline{default} = "\n";
 $g_metadata_newline{keywords} = ", ";
 my $g_document_format = "";
-
-# For use with WikiWords and [[Wiki Links]]
-$g_use_wiki_links = 0;
-$g_base_url = "";		# This is the base url to be used for WikiLinks
-my $g_temp_no_wikiwords = 0;
-
-# NOTE:
-# You can use \WikiWord to prevent a WikiWord from being treated as a link
-
 
 # Used to track when we're inside an ordered or unordered list
 # (see _ProcessListItems() for details):
@@ -375,9 +364,6 @@ sub Markdown {
 	
 	# Clean encoding within HTML comments
 	$text = _UnescapeComments($text);
-	
-	# This must follow _UnescapeSpecialChars
-	$text = _UnescapeWikiWords($text);
 	
 	$text = _FixFootnoteParagraphs($text);
 	$text .= _PrintFootnotes();
@@ -658,17 +644,7 @@ sub _RunSpanGamut {
 	# Process anchor and image tags. Images must come first,
 	# because ![foo][f] looks like an anchor.
 	$text = _DoImages($text);
-	$text = _DoAnchors($text);
-
-	# Process WikiWords
-	if ($g_use_wiki_links && !$g_temp_no_wikiwords && !$g_wikilinks_kill_switch) {
-		$text = _DoWikiLinks($text);
-		
-		# And then reprocess anchors and images
-		$text = _DoImages($text);
-		$text = _DoAnchors($text);
-	}
-	
+	$text = _DoAnchors($text);	
 
 	# Make links out of things like `<http://example.com/>`
 	# Must come after _DoAnchors(), because you can use < and >
@@ -995,10 +971,7 @@ sub _DoHeaders {
 	my $header = "";
 	my $label = "";
 	my $idString = "";
-	
-	# Don't do Wiki Links in Headers
-	$g_temp_no_wikiwords = 1;
-	
+		
 	# Setext-style headers:
 	#	  Header 1
 	#	  ========
@@ -1086,9 +1059,6 @@ sub _DoHeaders {
 
 			"<h$h_level$idString>"  .  $header  .  "</h$h_level>\n\n";
 		}egmx;
-
-	# Can now process Wiki Links again
-	$g_temp_no_wikiwords = 0;
 
 	return $text;
 }
@@ -1345,12 +1315,6 @@ sub _EncodeCode {
 # and lose their special Markdown meanings.
 #
     local $_ = shift;
-
-	# Protect Wiki Links in Code Blocks
-	if (!$g_wikilinks_kill_switch) {
-		my $WikiWord = qr'[A-Z]+[a-z\x80-\xff]+[A-Z][A-Za-z\x80-\xff]*';
-		s/(\A\\?|\s\\?)($WikiWord)/$1\\$2/gx;
-	}
 	
 	# Encode all ampersands; HTML entities are not
 	# entities within a Markdown code span.
@@ -1754,12 +1718,6 @@ sub _ParseMetaData {
 				if (lc($currentKey) eq "base url") {
 					$g_base_url = $g_metadata{$currentKey};
 				}
-				if (lc($currentKey) eq "use wikilinks") {
-					if (lc($g_metadata{$currentKey}) eq "true" ||
-						$g_metadata{$currentKey} eq "1") {
-							$g_use_wiki_links = 1;
-						}
-				}
 				if (lc($currentKey) eq "bibliography title") {
 					$g_bibliography_title = $g_metadata{$currentKey};
 					$g_bibliography_title =~ s/\s*$//;
@@ -1976,79 +1934,6 @@ sub _ConvertCopyright{
 	# Convert to an XML compatible form of copyright symbol
 	
 	$text =~ s/&copy;/&#xA9;/gi;
-	
-	return $text;
-}
-
-sub _CreateWikiLink {
-	my $title = shift;
-	
-	my $id = $title;
-		$id =~ s/ /_/g;
-		$id =~ s/__+/_/g;
-		$id =~ s/^_//g;
-		$id =~ s/_$//;
-
-	$title =~ s/_/ /g;
-		
-	return "[$title]($g_base_url$id)";
-}
-
-sub _DoWikiLinks {
-	my $text = shift;
-	my $WikiWord = '[A-Z]+[a-z\x80-\xff]+[A-Z][A-Za-z\x80-\xff]*';
-	my $FreeLinkPattern = "([-,.()' _0-9A-Za-z\x80-\xff]+)";
-	
-	if ($g_wikilinks_kill_switch) {
-		return $text;
-	}	
-	
-	if ($g_use_wiki_links) {
-		# FreeLinks
-		$text =~ s{
-			\[\[($FreeLinkPattern)\]\]
-		}{
-			my $label = $1;
-			$label =~ s{
-				([\s\>])($WikiWord)
-			}{
-				$1 ."\\" . $2
-			}xsge;
-			
-			_CreateWikiLink($label)
-		}xsge;
-	}
-	
-	# WikiWords
-	if ($g_use_wiki_links) {
-		$text =~ s{
-			([\s])($WikiWord)
-		}{
-			$1 . _CreateWikiLink($2)
-		}xsge;
-		
-		# Catch WikiWords at beginning of text
-		$text =~ s{^($WikiWord)
-		}{
-			_CreateWikiLink($1)
-		}xse;
-	}
-	
-	
-	return $text;
-}
-
-sub _UnescapeWikiWords {
-	my $text = shift;
-	my $WikiWord = '[A-Z]+[a-z\x80-\xff]+[A-Z][A-Za-z\x80-\xff]*';
-
-	if ($g_wikilinks_kill_switch) {
-		return $text;
-	}
-		
-	# Unescape escaped WikiWords
-	# This should occur whether wikilinks are enabled or not
-	$text =~ s/(?<=\B)\\($WikiWord)/$1/g;
 	
 	return $text;
 }
