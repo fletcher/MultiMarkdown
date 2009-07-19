@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 
-<!-- XHTML-to-Memoir converter by Fletcher Penney
+<!-- XHTML-to-LaTeX converter by Fletcher Penney
 	specifically designed for use with MultiMarkdown created XHTML
 
 	Strip out all the "header" information - just output the actual content.
@@ -259,30 +259,5 @@
 		<xsl:apply-templates select="node()"/>
 	</xsl:template>
 
-	<!-- Memoir handles glossaries differently -->
-
-	<xsl:template match="html:li" mode="glossary">
-		<xsl:if test="parent::html:ol/parent::html:div/@class = 'footnotes'">
-			<xsl:if test="concat('#',@id) = $footnoteId">
-				<xsl:apply-templates select="html:span[@class='glossary sort']" mode="glossary"/>
-				<xsl:apply-templates select="html:span[@class='glossary name']" mode="glossary"/>
-				<xsl:text>{</xsl:text>
-				<xsl:apply-templates select="html:p" mode="glossary"/>
-				<xsl:text>}</xsl:text>
-			</xsl:if>
-		</xsl:if>
-	</xsl:template>
-
-	<xsl:template match="html:span[@class='glossary name']" mode="glossary">
-		<xsl:text>{</xsl:text>
-		<xsl:apply-templates select="node()"/>
-		<xsl:text>}</xsl:text>
-	</xsl:template>
-	
-	<xsl:template match="html:span[@class='glossary sort']" mode="glossary">
-		<xsl:text>(</xsl:text>
-		<xsl:apply-templates select="node()"/>
-		<xsl:text>)</xsl:text>
-	</xsl:template>
 
 </xsl:stylesheet>
