@@ -70,7 +70,6 @@ my $g_empty_element_suffix = " />";     # Change to ">" for HTML output
 my $g_tab_width = 4;
 my $g_allow_mathml = 1;
 my $g_base_header_level = 1;
-this is the first step
 
 #
 # Globals:
