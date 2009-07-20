@@ -481,6 +481,7 @@
 	<!-- footnote li -->
 	<!-- print contents of the matching footnote -->
 	<xsl:template match="html:li" mode="footnote">
+		<xsl:param name="footnoteId"/>
 		<xsl:if test="parent::html:ol/parent::html:div/@class = 'footnotes'">
 			<xsl:if test="concat('#',@id) = $footnoteId">
 				<xsl:apply-templates select="node()"/>
@@ -495,6 +496,7 @@
 
 	<!-- print contents of the matching footnote as a glossary entry-->
 	<xsl:template match="html:li" mode="glossary">
+		<xsl:param name="footnoteId"/>
 		<xsl:if test="parent::html:ol/parent::html:div/@class = 'footnotes'">
 			<xsl:if test="concat('#',@id) = $footnoteId">
 				<xsl:apply-templates select="html:span" mode="glossary"/>
