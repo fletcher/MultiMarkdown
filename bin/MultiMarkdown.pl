@@ -371,10 +371,12 @@ sub Markdown {
 		
 	$text = _ConvertCopyright($text);
 	
-	if (lc($g_document_format) =~ /^complete\s*$/) {
+	if (lc($g_document_format) =~ /^complete\s*$/i) {
 		return xhtmlMetaData() . "<body>\n\n" . $text . "\n</body>\n</html>";
+	} elsif (lc($g_document_format) =~ /^snippet\s*$/i) {
+		return $text . "\n";
 	} else {
-		return textMetaData() . $text . "\n";
+		return $g_document_format . textMetaData() . $text . "\n";
 	}
 	
 }
