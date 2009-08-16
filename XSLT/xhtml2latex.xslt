@@ -817,10 +817,12 @@
 \end{center}
 </xsl:text>
 		<xsl:if test="@title">
-			<xsl:text>\caption{</xsl:text>
-			<xsl:apply-templates select="@title"/>
-			<xsl:text>}
-</xsl:text>
+			<xsl:if test="not(@title = '')">
+				<xsl:text>\caption{</xsl:text>
+				<xsl:apply-templates select="@title"/>
+				<xsl:text>}
+	</xsl:text>
+			</xsl:if>
 		</xsl:if>
 	<xsl:text>\end{figure}
 </xsl:text>
