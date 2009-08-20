@@ -60,6 +60,42 @@ sub ProcessMMD2XHTML {
 	close (MultiMarkdown);
 }
 
+sub ProcessMMD2RTF {
+	my $MMDPath = shift;
+	my $input_file = shift;
+	my $text = "Format: complete\n";
+	$text .= shift;
+
+	my $output_file = "";
+	$output_file = _Input2Output($input_file, "rtf") if ($input_file ne "");
+	
+	my $SmartyPants = _WhichSmarty($text);
+	my $xslt_file = _RTFXSLT($text);
+	$xslt_file = "xhtml2rtf.xslt" if ($xslt_file eq "");	# Default
+	
+	# Generate the pipe command and run
+	
+	my $os = $^O;
+	my $xslt = "";
+	my $out = "";
+	
+	if ($input_file ne "") {
+		$out = "> \"$output_file\"";
+	}
+	
+	if ($os =~ /MSWin/) {
+		$xslt = "| xsltproc -nonet -novalid XSLT\\$xslt_file -" if ($xslt_file ne "");
+		$MMDPath =~ s/\//\\/g;
+		open (MultiMarkdown, "| cd \"$MMDPath\" & perl bin\\MultiMarkdown.pl | perl bin\\$SmartyPants $xslt $out");
+	} else {
+		$xslt = "| xsltproc -nonet -novalid XSLT/$xslt_file -" if ($xslt_file ne "");
+		open (MultiMarkdown, "| cd \"$MMDPath\"; bin/MultiMarkdown.pl | bin/$SmartyPants $xslt $out");
+	}
+	
+	print MultiMarkdown $text;
+	close (MultiMarkdown);
+}
+
 sub ProcessMMD2LaTeX {
 	my $MMDPath = shift;
 	my $input_file = shift;
@@ -129,6 +165,39 @@ sub ProcessMMD2PDFXeLaTeX {
 		$tex_string = "& xelatex mmd.tex & makeindex -t mmd.glg -o mmd.gls -s mmd.ist mmd.glo & makeindex -s `kpsewhich basic.gst` -o mmd.gls mmd.glo & xelatex mmd.tex & xelatex mmd.tex & xelatex mmd.tex & xelatex mmd.tex";
 	}
 	PDFEngine($MMDPath, $input_file, $tex_string, $text);
+}
+
+sub ProcessXHTML2MMD {
+	my $MMDPath = shift;
+	my $input_file = shift;
+	my $text = shift;
+	
+	my $output_file = "";
+	$output_file = _Input2Output($input_file, "txt") if ($input_file ne "");
+	
+	my $xslt_file = "multimarkdown.xslt";
+	
+	# Generate the pipe command and run
+	
+	my $os = $^O;
+	my $xslt = "";
+	my $out = "";
+	
+	if ($input_file ne "") {
+		$out = "> \"$output_file\"";
+	}
+	
+	if ($os =~ /MSWin/) {
+		$xslt = "| xsltproc -nonet -novalid XSLT\\$xslt_file -" if ($xslt_file ne "");
+		$MMDPath =~ s/\//\\/g;
+		open (MultiMarkdown, "| cd \"$MMDPath\" & xsltproc -nonet -novalid XSLT\\$xslt_file - $out");
+	} else {
+		$xslt = "| xsltproc -nonet -novalid XSLT/$xslt_file -" if ($xslt_file ne "");
+		open (MultiMarkdown, "| cd \"$MMDPath\"; xsltproc -nonet -novalid XSLT/$xslt_file - $out");
+	}
+	
+	print MultiMarkdown $text;
+	close (MultiMarkdown);	
 }
 
 sub PDFEngine {
@@ -299,6 +368,35 @@ sub _LatexXSLT {
 }
 
 
+sub _RTFXSLT {
+	my $text = shift;
+	
+	my ($inMetaData, $currentKey) = (1,'');
+	
+	foreach my $line ( split /\n/, $text ) {
+		$line =~ /^$/ and $inMetaData = 0 and next;
+		if ($inMetaData) {
+			if ($line =~ /^([a-zA-Z0-9][0-9a-zA-Z _-]*?):\s*(.*)$/ ) {
+				$currentKey = $1;
+				my $temp = $2;
+				$currentKey =~ s/ //g;
+				$g_metadata{$currentKey} = $temp;
+				if (lc($currentKey) eq "rtfxslt") {
+					$g_metadata{$currentKey} =~ s/\s*(\.xslt)?\s*$/.xslt/;
+					return $g_metadata{$currentKey};
+				}
+			} else {
+				if ($currentKey eq "") {
+					# No metadata present
+					$inMetaData = 0;
+					next;
+				}
+			}
+		}
+	}
+	
+	return "";
+}
 
 sub LocateMMD {
 	my $me = shift;		# Where am I running from?
