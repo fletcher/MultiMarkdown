@@ -256,6 +256,10 @@
 <xsl:value-of select="$newline"/>
 </xsl:template>
 	
+	<xsl:template match="html:br">
+		<xsl:text>\line</xsl:text>
+	</xsl:template>
+	
 	<xsl:template match="text()">
 		<xsl:call-template name="clean-text">
 			<xsl:with-param name="source">
