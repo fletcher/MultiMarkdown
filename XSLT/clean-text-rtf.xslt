@@ -73,6 +73,12 @@
 			<xsl:with-param name="original">
 		<xsl:call-template name="replace-substring">
 			<xsl:with-param name="original">
+		<xsl:call-template name="replace-substring">
+			<xsl:with-param name="original">
+		<xsl:call-template name="replace-substring">
+			<xsl:with-param name="original">
+		<xsl:call-template name="replace-substring">
+			<xsl:with-param name="original">
 			<xsl:value-of select="$source"/>
 			</xsl:with-param>
 			<xsl:with-param name="substring">
@@ -128,6 +134,30 @@
 			</xsl:with-param>
 			<xsl:with-param name="replacement">
 				<xsl:text>\'85</xsl:text>
+			</xsl:with-param>
+		</xsl:call-template>
+			</xsl:with-param>
+			<xsl:with-param name="substring">
+				<xsl:text>\</xsl:text>
+			</xsl:with-param>
+			<xsl:with-param name="replacement">
+				<xsl:text>\\</xsl:text>
+			</xsl:with-param>
+		</xsl:call-template>
+			</xsl:with-param>
+			<xsl:with-param name="substring">
+				<xsl:text>{</xsl:text>
+			</xsl:with-param>
+			<xsl:with-param name="replacement">
+				<xsl:text>\{</xsl:text>
+			</xsl:with-param>
+		</xsl:call-template>
+			</xsl:with-param>
+			<xsl:with-param name="substring">
+				<xsl:text>}</xsl:text>
+			</xsl:with-param>
+			<xsl:with-param name="replacement">
+				<xsl:text>\}</xsl:text>
 			</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
