@@ -58,7 +58,7 @@
 				<xsl:with-param name="source">
 					<xsl:value-of select="."/>
 				</xsl:with-param>
-			</xsl:call-template>		
+			</xsl:call-template>
 		<xsl:text>}
 </xsl:text>
 	</xsl:template>
@@ -443,7 +443,7 @@
 			<xsl:with-param name="source">
 				<xsl:value-of select="."/>
 			</xsl:with-param>
-		</xsl:call-template>		
+		</xsl:call-template>
 	</xsl:template>
 
 	<xsl:template match="m:*/text()">
