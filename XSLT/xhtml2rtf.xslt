@@ -51,6 +51,9 @@
 
 	<xsl:param name="footnoteId"/>
 
+	<xsl:param name="leftIndent" select="750" NaN="0"/>
+	<xsl:param name="rightIndent"/>
+
 	<xsl:decimal-format name="string" NaN="1"/>
 
 	<xsl:template match="html:body">
@@ -259,13 +262,39 @@
 	<xsl:template match="html:br">
 		<xsl:text>\line</xsl:text>
 	</xsl:template>
+
+	<!-- blockquote -->
+	<xsl:template match="html:blockquote">
+		<xsl:param name="leftIndent"/>
+		<xsl:choose>
+			<xsl:when test="string(number($leftIndent)) = 'NaN'">
+				<xsl:param name="newLeft" select="1"/>
+\lin<xsl:value-of select="$newLeft*750"/>\rin750
+<xsl:apply-templates select="node()">
+					<xsl:with-param name="leftIndent" select="$newLeft"/>
+				</xsl:apply-templates>
+					<xsl:text>\lin0\rin0
+</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:param name="newLeft" select="$leftIndent+1" />
+\lin<xsl:value-of select="$newLeft*750"/>\rin750
+<xsl:apply-templates select="node()">
+					<xsl:with-param name="leftIndent" select="$newLeft"/>
+				</xsl:apply-templates>
+			<xsl:text>\lin0\rin0
+</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
 	
 	<xsl:template match="text()">
 		<xsl:call-template name="clean-text">
 			<xsl:with-param name="source">
 				<xsl:value-of select="."/>
 			</xsl:with-param>
-		</xsl:call-template>		
+		</xsl:call-template>
 	</xsl:template>
 	
 </xsl:stylesheet>
