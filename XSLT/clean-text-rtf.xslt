@@ -82,6 +82,14 @@
 			<xsl:value-of select="$source"/>
 			</xsl:with-param>
 			<xsl:with-param name="substring">
+				<xsl:text>\</xsl:text>
+			</xsl:with-param>
+			<xsl:with-param name="replacement">
+				<xsl:text>\\</xsl:text>
+			</xsl:with-param>
+		</xsl:call-template>
+			</xsl:with-param>
+			<xsl:with-param name="substring">
 				<xsl:text>&#8217;</xsl:text>
 			</xsl:with-param>
 			<xsl:with-param name="replacement">
@@ -134,14 +142,6 @@
 			</xsl:with-param>
 			<xsl:with-param name="replacement">
 				<xsl:text>\'85</xsl:text>
-			</xsl:with-param>
-		</xsl:call-template>
-			</xsl:with-param>
-			<xsl:with-param name="substring">
-				<xsl:text>\</xsl:text>
-			</xsl:with-param>
-			<xsl:with-param name="replacement">
-				<xsl:text>\\</xsl:text>
 			</xsl:with-param>
 		</xsl:call-template>
 			</xsl:with-param>
