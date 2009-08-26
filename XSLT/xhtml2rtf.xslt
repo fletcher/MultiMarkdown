@@ -288,7 +288,105 @@
 		</xsl:choose>
 	</xsl:template>
 
-	
+	<!-- anchors -->
+	<xsl:template match="html:a[@href]">
+		<xsl:choose>
+			<!-- footnote (my addition)-->
+			<xsl:when test="@class = 'footnote'">
+				<xsl:text>{\super \chftn{\*\footnote{ </xsl:text>
+				<xsl:apply-templates select="/html:html/html:body/html:div[@class]/html:ol/html:li[@id]" mode="footnote">
+					<xsl:with-param name="footnoteId" select="@href"/>
+				</xsl:apply-templates>
+				<xsl:text>}}}</xsl:text>
+			</xsl:when>
+
+			<xsl:when test="@class = 'footnote glossary'">
+				<xsl:text>\glossary</xsl:text>
+				<xsl:apply-templates select="/html:html/html:body/html:div[@class]/html:ol/html:li[@id]" mode="glossary">
+					<xsl:with-param name="footnoteId" select="@href"/>
+				</xsl:apply-templates>
+				<xsl:text></xsl:text>
+			</xsl:when>
+
+			<xsl:when test="@class = 'reversefootnote'">
+			</xsl:when>
+
+			<!-- if href is same as the anchor text, then use \href{} 
+				but no footnote -->
+			<!-- let's try \url{} again for line break reasons -->
+			<xsl:when test="@href = .">
+				<xsl:text>\url{</xsl:text>
+				<xsl:call-template name="clean-text">
+					<xsl:with-param name="source">
+						<xsl:value-of select="@href"/>
+					</xsl:with-param>
+				</xsl:call-template>		
+				<xsl:text>}</xsl:text>
+			</xsl:when>
+
+			<!-- if href is mailto, use \href{} -->
+			<xsl:when test="starts-with(@href,'mailto:')">
+				<xsl:text>\href{</xsl:text>
+				<xsl:value-of select="@href"/>
+				<xsl:text>}{</xsl:text>
+				<xsl:call-template name="clean-text">
+					<xsl:with-param name="source">
+						<xsl:value-of select="substring-after(@href,'mailto:')"/>
+					</xsl:with-param>
+				</xsl:call-template>		
+				<xsl:text>}</xsl:text>
+			</xsl:when>
+			
+			<!-- if href is local anchor, use autoref -->
+			<xsl:when test="starts-with(@href,'#')">
+				<xsl:choose>
+					<xsl:when test=". = ''">
+						<xsl:text>\autoref{</xsl:text>
+						<xsl:value-of select="substring-after(@href,'#')"/>
+						<xsl:text>}</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="."/>
+						<xsl:text> (\autoref{</xsl:text>
+						<xsl:value-of select="substring-after(@href,'#')"/>
+						<xsl:text>})</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:when>
+			
+			<!-- otherwise, implement an href and put href in footnote
+				for printed version -->
+			<xsl:otherwise>
+				<xsl:text>{\field{\*\fldinst{HYPERLINK "</xsl:text>
+				<xsl:value-of select="@href"/>
+				<xsl:text>"}}{\fldrslt \b \cf0 </xsl:text>
+				<xsl:call-template name="clean-text">
+					<xsl:with-param name="source">
+						<xsl:value-of select="."/>
+					</xsl:with-param>
+				</xsl:call-template>		
+				<xsl:text>}}{\super \chftn{\*\footnote{ </xsl:text>
+				<xsl:call-template name="clean-text">
+					<xsl:with-param name="source">
+						<xsl:value-of select="@href"/>
+					</xsl:with-param>
+				</xsl:call-template>		
+				<xsl:text>}}}</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
+	<!-- footnote li -->
+	<!-- print contents of the matching footnote -->
+	<xsl:template match="html:li" mode="footnote">
+		<xsl:param name="footnoteId"/>
+		<xsl:if test="parent::html:ol/parent::html:div/@class = 'footnotes'">
+			<xsl:if test="concat('#',@id) = $footnoteId">
+				<xsl:apply-templates select="node()"/>
+			</xsl:if>
+		</xsl:if>
+	</xsl:template>
+
 	<xsl:template match="text()">
 		<xsl:call-template name="clean-text">
 			<xsl:with-param name="source">
