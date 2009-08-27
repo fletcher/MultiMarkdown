@@ -8,6 +8,14 @@
 	
 	Yes - this is the project I swore I would never do.... 
 	You're welcome.  ;)
+	
+	Known Limitations:
+	
+	MathML - there is no suitable MathML -> RTF tool that I'm aware of that
+		would really fit into MMD.  Besides - if you are using MathML, you
+		REALLY need to be using LaTeX->PDF rather than RTF.
+	
+	
 -->
 
 <!-- 
@@ -301,12 +309,12 @@
 			</xsl:when>
 
 			<xsl:when test="@class = 'footnote glossary'">
-				<xsl:text>\glossary</xsl:text>
-				<xsl:apply-templates select="/html:html/html:body/html:div[@class]/html:ol/html:li[@id]" mode="glossary">
-					<xsl:with-param name="footnoteId" select="@href"/>
-				</xsl:apply-templates>
-				<xsl:text></xsl:text>
-			</xsl:when>
+					<xsl:text>{\super \chftn{\*\footnote{ </xsl:text>
+					<xsl:apply-templates select="/html:html/html:body/html:div[@class]/html:ol/html:li[@id]" mode="glossary">
+						<xsl:with-param name="footnoteId" select="@href"/>
+					</xsl:apply-templates>
+					<xsl:text>}}}</xsl:text>
+				</xsl:when>
 
 			<xsl:when test="@class = 'reversefootnote'">
 			</xsl:when>
@@ -326,15 +334,15 @@
 
 			<!-- if href is mailto, use \href{} -->
 			<xsl:when test="starts-with(@href,'mailto:')">
-				<xsl:text>\href{</xsl:text>
+				<xsl:text>{\field{\*\fldinst{HYPERLINK "</xsl:text>
 				<xsl:value-of select="@href"/>
-				<xsl:text>}{</xsl:text>
+				<xsl:text>"}}{\fldrslt \b \cf0 </xsl:text>
 				<xsl:call-template name="clean-text">
 					<xsl:with-param name="source">
-						<xsl:value-of select="substring-after(@href,'mailto:')"/>
+						<xsl:value-of select="."/>
 					</xsl:with-param>
 				</xsl:call-template>		
-				<xsl:text>}</xsl:text>
+				<xsl:text>}}</xsl:text>
 			</xsl:when>
 			
 			<!-- if href is local anchor, use autoref -->
@@ -386,6 +394,42 @@
 			</xsl:if>
 		</xsl:if>
 	</xsl:template>
+
+	<!-- footnotes -->
+	<xsl:template match="html:div">
+		<xsl:if test="not(@class = 'footnotes')">
+			<xsl:apply-templates select="node()"/>
+		</xsl:if>
+	</xsl:template>
+
+	<!-- print contents of the matching footnote as a glossary entry-->
+	<xsl:template match="html:li" mode="glossary">
+		<xsl:param name="footnoteId"/>
+		<xsl:if test="parent::html:ol/parent::html:div/@class = 'footnotes'">
+			<xsl:if test="concat('#',@id) = $footnoteId">
+				<xsl:apply-templates select="html:span" mode="glossary"/>
+				<xsl:apply-templates select="html:p" mode="glossary"/>
+			</xsl:if>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="html:p" mode="glossary">
+		<xsl:apply-templates select="node()"/>
+		<xsl:if test="position()!= last()">
+			<xsl:text>\
+</xsl:text>
+		</xsl:if>
+	</xsl:template>
+
+	<!-- use these when asked for -->
+	<xsl:template match="html:span[@class='glossary name']" mode="glossary">
+		<xsl:apply-templates select="node()"/>
+		<xsl:text>: </xsl:text>
+	</xsl:template>
+	
+	<xsl:template match="html:span[@class='glossary sort']" mode="glossary">
+	</xsl:template>
+
 
 	<xsl:template match="text()">
 		<xsl:call-template name="clean-text">
