@@ -15,6 +15,7 @@
 		would really fit into MMD.  Besides - if you are using MathML, you
 		REALLY need to be using LaTeX->PDF rather than RTF.
 	
+	Lists - need to count which list number, indent level, what marker to use
 	
 -->
 
@@ -112,7 +113,8 @@
 	</xsl:template>
 
 	<xsl:template name="rtf-intro-closing">
-		<xsl:text>}\f0\pard\sa280
+		<xsl:text>}\margl1440\margr1440
+\f0\pard\sa280
 </xsl:text>
 	</xsl:template>
 	
