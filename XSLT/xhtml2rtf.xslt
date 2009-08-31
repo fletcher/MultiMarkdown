@@ -20,9 +20,10 @@
 	
 	If you absolutely have to use RTF, you should try using Google Docs to 
 	upload the HTML version of your document, and then download it as an RTF 
-	(or ODT).  Google's RTF converter isn't too bad if you absolutely have to 
-	use RTF. If you export as XHTML using the xhtml-google-docs XSLT, you can 
-	even use footnotes, though I don't think they survive the trip into RTF.
+	(or ODT).  Google's RTF converter isn't too bad if you have to use RTF. If 
+	you export as XHTML using the xhtml-google-docs XSLT, you can even use 
+	footnotes, though I don't think they survive the trip into RTF as 
+	footnotes.
 	
 	If you are going to use this, the following limitations apply:
 	
