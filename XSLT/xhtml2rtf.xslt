@@ -9,19 +9,46 @@
 	Yes - this is the project I swore I would never do.... 
 	You're welcome.  ;)
 	
+	
 	Known Limitations (and opportunities for you to help!):
+	
+	FIRST AND FOREMOST --- RTF is a crappy document format.  It sucks - no two 
+	ways about it. This converter is designed to get passable results on basic 
+	MMD documents for most situations.  If you have a (mildly!) complicated 
+	document, it's probably going to suck.  Go with LaTeX instead.  But if you 
+	must use RTF, it might work for you.  
+	
+	If you absolutely have to use RTF, you should try using Google Docs to 
+	upload the HTML version of your document, and then download it as an RTF 
+	(or ODT).  Google's RTF converter isn't too bad if you absolutely have to 
+	use RTF. If you export as XHTML using the xhtml-google-docs XSLT, you can 
+	even use footnotes, though I don't think they survive the trip into RTF.
+	
+	If you are going to use this, the following limitations apply:
 	
 	MathML - there is no suitable MathML -> RTF tool that I'm aware of that
 		would really fit into MMD.  Besides - if you are using MathML, you
 		REALLY need to be using LaTeX->PDF rather than RTF.
 	
-	Lists - need to count which list number, indent level, what marker to use.
-		I welcome submissions on a good approach to converting HTML lists
-		into RTF
+	Lists - I welcome submissions on a good approach to converting HTML lists
+		into RTF, but for now lists don't really work right - the syntax is 
+		needless complex, and I don't relish sorting through it all
 	
-	TODO: Add table support
-	TODO: Add image support??
+	Images - I'm not sure what to do here - probably more effort than it's 
+		worth
 	
+	Tables - similar to lists above - just not worth the effort
+	
+	
+	That said, what are the benefits of this version?
+	
+	* Footnotes work
+	* Internal links work for headers
+	* It's easy
+	* Basic formatting looks pretty good
+	* Styles are intact (e.g. default, header1, header2)
+	
+	NOTE: I strongly recommend avoiding TextEdit like the plague.
 	
 -->
 
