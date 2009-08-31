@@ -19,6 +19,10 @@
 		I welcome submissions on a good approach to converting HTML lists
 		into RTF
 	
+	TODO: Add table support
+	TODO: Add image support??
+	
+	
 -->
 
 <!-- 
@@ -434,24 +438,12 @@
 
 	<!-- Place citations in as footnotes -->
 
-	<xsl:template match="html:span[@class='externalcitation']">
-		<xsl:text>\cite</xsl:text>
-		<xsl:apply-templates select="html:span" mode="citation"/>
-		<xsl:apply-templates select="html:a" mode="citation"/>
-		<xsl:text>}</xsl:text>
-	</xsl:template>
-
 	<xsl:template match="html:span[@class='markdowncitation']">
 		<xsl:text>{\super \chftn{\*\footnote{ </xsl:text>
 		<xsl:apply-templates select="/html:html/html:body/html:div[@class]/html:div[@id]" mode="markdowncitation">
 			<xsl:with-param name="citationID" select="child::html:a/@href"/>
 		</xsl:apply-templates>
 		<xsl:text>}}}</xsl:text>
-
-		<xsl:text>cite</xsl:text>
-		<xsl:apply-templates select="html:span" mode="citation"/>
-		<xsl:apply-templates select="html:a" mode="markdowncitation"/>
-		<xsl:text></xsl:text>
 	</xsl:template>
 
 	<!-- citation div -->
