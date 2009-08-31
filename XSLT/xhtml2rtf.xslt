@@ -12,7 +12,7 @@
 	
 	Known Limitations (and opportunities for you to help!):
 	
-	FIRST AND FOREMOST --- RTF is a crappy document format.  It sucks - no two 
+	FIRST AND FOREMOST - RTF is a crappy document format.  It sucks - no two 
 	ways about it. This converter is designed to get passable results on basic 
 	MMD documents for most situations.  If you have a (mildly!) complicated 
 	document, it's probably going to suck.  Go with LaTeX instead.  But if you 
