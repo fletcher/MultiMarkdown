@@ -242,12 +242,12 @@
 	<!-- headers -->
 	
 	<xsl:template match="html:h1">
-\s1 <xsl:apply-templates select="node()"/>
+\s1 {\*\bkmkstart <xsl:value-of select="@id"/>}<xsl:apply-templates select="node()"/>{\*\bkmkend <xsl:value-of select="@id"/>}
 <xsl:value-of select="$newline"/>
 </xsl:template>
 
 	<xsl:template match="html:h2">
-\s2 <xsl:apply-templates select="node()"/>
+\s2 {\*\bkmkstart <xsl:value-of select="@id"/>}<xsl:apply-templates select="node()"/>{\*\bkmkend <xsl:value-of select="@id"/>}
 <xsl:value-of select="$newline"/>
 </xsl:template>
 
@@ -351,19 +351,15 @@
 			
 			<!-- if href is local anchor, use autoref -->
 			<xsl:when test="starts-with(@href,'#')">
-				<xsl:choose>
-					<xsl:when test=". = ''">
-						<xsl:text>\autoref{</xsl:text>
-						<xsl:value-of select="substring-after(@href,'#')"/>
-						<xsl:text>}</xsl:text>
-					</xsl:when>
-					<xsl:otherwise>
+				<xsl:text>{\field{\*\fldinst REF </xsl:text>
+				<xsl:value-of select="substring-after(@href,'#')"/>
+				<xsl:text>}{\fldrslt \b \cf0 </xsl:text>
+				<xsl:call-template name="clean-text">
+					<xsl:with-param name="source">
 						<xsl:value-of select="."/>
-						<xsl:text> (\autoref{</xsl:text>
-						<xsl:value-of select="substring-after(@href,'#')"/>
-						<xsl:text>})</xsl:text>
-					</xsl:otherwise>
-				</xsl:choose>
+					</xsl:with-param>
+				</xsl:call-template>		
+				<xsl:text>}}</xsl:text>
 			</xsl:when>
 			
 			<!-- otherwise, implement an href and put href in footnote
