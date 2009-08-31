@@ -86,7 +86,7 @@ sub ProcessMMD2RTF {
 	if ($os =~ /MSWin/) {
 		$xslt = "| xsltproc -nonet -novalid XSLT\\$xslt_file -" if ($xslt_file ne "");
 		$MMDPath =~ s/\//\\/g;
-		open (MultiMarkdown, "| cd \"$MMDPath\" & perl -pi -e 's/(?<![ \\\\])\n/ \n/g' | perl bin\\MultiMarkdown.pl | perl bin\\$SmartyPants $xslt $out");
+		open (MultiMarkdown, "| cd \"$MMDPath\" & perl -pi -e 's/(?<![ \\\\])\n/ \n/g' | perl bin\\MultiMarkdown.pl | perl bin\\$SmartyPants $xslt | perl -pi -e 's/(?<![ \.])(?<!\\\\[fs]\\d)(?<!\\\\fs\\d\\d)  +/ /g' | perl -pi -e 's/\.   +/.  /g'  | perl -pi -e 's/^ +//mg' $out");
 	} else {
 		$xslt = "| xsltproc -nonet -novalid XSLT/$xslt_file -" if ($xslt_file ne "");
 		open (MultiMarkdown, "| cd \"$MMDPath\"; perl -pi -e 's/(?<![ #\\\\])\n/ \n/g' | bin/MultiMarkdown.pl | bin/$SmartyPants $xslt | perl -pi -e 's/(?<![ \.])(?<!\\\\[fs]\\d)(?<!\\\\fs\\d\\d)  +/ /g' | perl -pi -e 's/\.   +/.  /g'  | perl -pi -e 's/^ +//mg' $out");
