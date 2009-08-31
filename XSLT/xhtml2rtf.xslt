@@ -59,6 +59,11 @@
 
 	<xsl:strip-space elements="*" />
 
+	<xsl:variable name="plainnewline">
+<xsl:text>
+</xsl:text>
+	</xsl:variable>
+
 	<xsl:variable name="newline">
 <xsl:text>\
 </xsl:text>
@@ -104,14 +109,16 @@
 
 	<xsl:template name="rtf-intro">
 		<xsl:text>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf460
-{\fonttbl{\f0\froman Times;}}
-{\stylesheet{\s0\fs24\f0\qj\sb280\sa280 Normal;}
-{\s1\fs48\f0\sb280\sa280 Header 1;}
-{\s2\fs40\f0\sb280\sa280 Header 1;}
-{\s3\fs32\f0\sb280\sa280 Header 1;}
-{\s4\fs24\f0\sb280\sa280 Header 1;}
-{\s5\fs24\f0\sb280\sa280 Header 1;}
-{\s6\fs24\f0\sb280\sa280 Header 1;}
+{\fonttbl{\f0\froman Times;}
+{\f1\fmodern Courier;}}
+{\stylesheet{\s0\f0\fs24\qj\sb280\sa280 Normal;}
+{\s1\fs48\f0\sb280\sa280 Header1;}
+{\s2\fs40\f0\sb280\sa280 Header2;}
+{\s3\fs32\f0\sb280\sa280 Header3;}
+{\s4\fs24\f0\sb280\sa280 Header4;}
+{\s5\fs24\f0\sb280\sa280 Header5;}
+{\s6\fs24\f0\sb280\sa280 Header6;}
+{\s7\f1\fs20 Mono;}
 }
 {\colortbl;\red255\green255\blue255;}
 {\info
@@ -455,6 +462,42 @@
 				<xsl:apply-templates select="html:p/html:span"/>
 			</xsl:if>
 		</xsl:if>
+	</xsl:template>
+
+	<!-- code span -->
+	<xsl:template match="html:code">
+		<xsl:text>\f1\fs20 </xsl:text>
+		<xsl:apply-templates select="node()"/>
+		<xsl:text>\f0\fs24 </xsl:text>
+	</xsl:template>
+
+	<xsl:template match="html:pre">
+		<xsl:apply-templates select="node()" mode="code"/>
+		<xsl:value-of select="$newline"/>
+	</xsl:template>
+
+	<xsl:template match="html:code" mode="code">
+		<xsl:text>\f1\fs20 </xsl:text>
+		<xsl:apply-templates select="node()" mode="code"/>
+		<xsl:text>\f0\fs24 </xsl:text>
+	</xsl:template>
+
+	<xsl:template match="text()" mode="code">
+		<xsl:call-template name="replace-substring">
+			<xsl:with-param name="original">
+				<xsl:call-template name="clean-text">
+					<xsl:with-param name="source">
+						<xsl:value-of select="."/>
+					</xsl:with-param>
+				</xsl:call-template>
+			</xsl:with-param>
+			<xsl:with-param name="substring">
+				<xsl:value-of select="$plainnewline"/>
+			</xsl:with-param>
+			<xsl:with-param name="replacement">
+				<xsl:value-of select="$newline"/>
+			</xsl:with-param>
+		</xsl:call-template>
 	</xsl:template>
 
 
