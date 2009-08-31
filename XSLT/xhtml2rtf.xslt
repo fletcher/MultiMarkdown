@@ -9,13 +9,15 @@
 	Yes - this is the project I swore I would never do.... 
 	You're welcome.  ;)
 	
-	Known Limitations:
+	Known Limitations (and opportunities for you to help!):
 	
 	MathML - there is no suitable MathML -> RTF tool that I'm aware of that
 		would really fit into MMD.  Besides - if you are using MathML, you
 		REALLY need to be using LaTeX->PDF rather than RTF.
 	
-	Lists - need to count which list number, indent level, what marker to use
+	Lists - need to count which list number, indent level, what marker to use.
+		I welcome submissions on a good approach to converting HTML lists
+		into RTF
 	
 -->
 
@@ -400,7 +402,9 @@
 	<!-- footnotes -->
 	<xsl:template match="html:div">
 		<xsl:if test="not(@class = 'footnotes')">
-			<xsl:apply-templates select="node()"/>
+			<xsl:if test="not(@class = 'bibliography')">
+				<xsl:apply-templates select="node()"/>
+			</xsl:if>
 		</xsl:if>
 	</xsl:template>
 
@@ -430,6 +434,39 @@
 	</xsl:template>
 	
 	<xsl:template match="html:span[@class='glossary sort']" mode="glossary">
+	</xsl:template>
+
+	<!-- Place citations in as footnotes -->
+
+	<xsl:template match="html:span[@class='externalcitation']">
+		<xsl:text>\cite</xsl:text>
+		<xsl:apply-templates select="html:span" mode="citation"/>
+		<xsl:apply-templates select="html:a" mode="citation"/>
+		<xsl:text>}</xsl:text>
+	</xsl:template>
+
+	<xsl:template match="html:span[@class='markdowncitation']">
+		<xsl:text>{\super \chftn{\*\footnote{ </xsl:text>
+		<xsl:apply-templates select="/html:html/html:body/html:div[@class]/html:div[@id]" mode="markdowncitation">
+			<xsl:with-param name="citationID" select="child::html:a/@href"/>
+		</xsl:apply-templates>
+		<xsl:text>}}}</xsl:text>
+
+		<xsl:text>cite</xsl:text>
+		<xsl:apply-templates select="html:span" mode="citation"/>
+		<xsl:apply-templates select="html:a" mode="markdowncitation"/>
+		<xsl:text></xsl:text>
+	</xsl:template>
+
+	<!-- citation div -->
+	<!-- print contents of the matching citation -->
+	<xsl:template match="html:div" mode="markdowncitation">
+		<xsl:param name="citationID"/>
+		<xsl:if test="parent::html:div/@class = 'bibliography'">
+			<xsl:if test="concat('#',@id) = $citationID">
+				<xsl:apply-templates select="html:p/html:span"/>
+			</xsl:if>
+		</xsl:if>
 	</xsl:template>
 
 
