@@ -266,8 +266,10 @@ else {
 			'html4tags',
 		);
 		if ($cli_opts{'version'}) {		# Version info
-			print "\nThis is Markdown, version $VERSION.\n";
-			print "Copyright 2004 John Gruber\n";
+			print "\nThis is MultiMarkdown, version $VERSION.\n";
+			print "Original code Copyright 2004 John Gruber\n";
+			print "MultiMarkdown changes Copyright 2005-2009 Fletcher Penney\n";
+			print "http://fletcherpenney.net/multimarkdown/\n";
 			print "http://daringfireball.net/projects/markdown/\n\n";
 			exit 0;
 		}
