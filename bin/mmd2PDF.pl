@@ -143,10 +143,16 @@ sub LocateMMD {
 
 sub LoadModule {
 	my $file = shift;
-	unless (my $return = eval `cat "$file"`) {
-		warn "couldn't parse $file: $@" if $@;
-		warn "couldn't do $file: $!" unless defined $return;
-		warn "couldn't run $file" unless $return;
+	my $os = $^O;	# Mac = darwin; Linux = linux; Windows contains MSWin
+
+	if ($os =~ /MSWin/) {
+		# Not sure what I can do her
+	} else {
+		unless (my $return = eval `cat "$file"`) {
+			warn "couldn't parse $file: $@" if $@;
+			warn "couldn't do $file: $!" unless defined $return;
+			warn "couldn't run $file" unless $return;
+		}
 	}
 }
 
