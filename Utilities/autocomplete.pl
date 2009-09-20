@@ -65,10 +65,11 @@ if ( $word_to_match =~ s/^\^/\\^/) {
 			(?:\]:|\s*\#)
 		)?
 		(?:.*\[($word_to_match.+?)\]>>)?		# Match Equation label
+		(?:\[($word_to_match.+?)\])?			# Match image or anchor def
 		(?:\[.*?\]\[($word_to_match.+?)\])?		# Match Table label (or at least a label
-		.*?$									# 	at the beginning of a line)
+		.*?$									# at the beginning of a line)
 	}{
-		"$1$2$3";
+		"$1$2$3$4";
 	}gemix;
 }
 
