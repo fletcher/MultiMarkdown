@@ -1706,6 +1706,15 @@ sub _ParseMetaData {
 	
 	my ($inMetaData, $currentKey) = (1,'');
 	
+	# If only metadata is "Format: complete" then skip
+	
+	if ($text =~ s/^(Format):\s*complete\n(.*?)\n/$2\n/is) {
+		# If "Format: complete" was added automatically, don't force first 
+		#	line of text to be metadata
+		$g_metadata{$1}= "complete";
+		$g_document_format = "complete";
+	}
+	
 	foreach my $line ( split /\n/, $text ) {
 		$line =~ /^$/ and $inMetaData = 0;
 		if ($inMetaData) {
