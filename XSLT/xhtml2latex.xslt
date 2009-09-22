@@ -739,12 +739,6 @@
 	<xsl:template match="html:img">
 		<xsl:text>\begin{figure}
 </xsl:text>
-		<xsl:if test="@id">
-			<xsl:text>\label{</xsl:text>
-			<xsl:value-of select="@id"/>
-			<xsl:text>}
-</xsl:text>
-		</xsl:if>
 		<xsl:text>\begin{center}
 </xsl:text>
 		<xsl:if test="@width|@height">
@@ -823,6 +817,12 @@
 				<xsl:text>}
 	</xsl:text>
 			</xsl:if>
+		</xsl:if>
+		<xsl:if test="@id">
+			<xsl:text>\label{</xsl:text>
+			<xsl:value-of select="@id"/>
+			<xsl:text>}
+</xsl:text>
 		</xsl:if>
 	<xsl:text>\end{figure}
 </xsl:text>
