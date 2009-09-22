@@ -28,7 +28,7 @@ XHTML XSLT:			xhtml-toc-h2.xslt
 
 This document is an introduction to [MultiMarkdown][] --- what it is, how to
 use it, how you can help make it better. This document exists in multiple
-formats: a wiki page, a plain text document, a pdf, a [Scrivener][] document,
+formats: a plain text document, a pdf, a [Scrivener][] document,
 etc. Find the format that best suits your needs, or create your own. That is
 what MultiMarkdown was designed to be used for!
 
@@ -289,10 +289,9 @@ if using the memoir class, you might want a first level header to be
 interpreted as a chapter, rather than as a part. To do this, simply set `Base
 Header Level` to `2`.
 
-### Base URL ###
+### Base URL (Deprecated)###
 
-Set to the base part of a url to be used for `WikiLinks` and `[[Free Links]]`.
-See [WikiLinks][] for more information.
+Deprecated - WikiWords and WikiLinks no longer supported.
 
 
 ### Bibliography Title ###
@@ -345,9 +344,13 @@ Set to `complete` to indicate that a fully-formed XHTML document should be
 produced. Such a document is ready for processing by an XSLT tool, such as the
 XSLT files to convert XHTML into LaTeX.
 
+Set to `snippet` to indicate that no `<head>` or other information should be
+included. This might be useful for generating (X)HTML output ready for pasting
+into a weblog, for example.
+
 **Note**: Some MultiMarkdown tools add this for you (e.g. TextMate using my
-bundle, and Scrivener.) Duplicating the `Format` key in these programs will
-not cause a problem.
+bundle, and Scrivener.) Duplicating the `Format` key in these programs should
+not cause a problem --- let me know if you have trouble.
 
 ### Keywords ###
 
@@ -410,7 +413,7 @@ such files myself, but others may find it useful.
 
 *I strongly encourage you to use another route to convert XHTML to RTF.  
 I've had the best results with [Google Docs](htts://docs.google.com/).  For 
-non-Mac users, that definitely the way to go.*
+non-Mac users, that's definitely the way to go.*
 
 ### Subtitle ###
 
@@ -425,7 +428,7 @@ string within the `<head>` section of an HTML document, and is also used by
 other export formats.
 
 
-### Use WikiLinks ###
+### Use WikiLinks (Deprecated)###
 
 Set to `true` or `1` to enable the use of `WikiWords` and `[[Free Links]]`.
 Requires that you also set `Base URL`. See [WikiLinks][] for more information.
@@ -481,8 +484,8 @@ within-document links as easily as it handled external links. To this aim, I
 added the ability to interpret `[Some Text][]` as a cross-link, if a header
 named "Some Text" exists.
 
-As an example, `[Introduction to MultiMarkdown][]` will take you to [the
-Introduction][Introduction to MultiMarkdown].
+As an example, `[Metadata][]` will take you to the
+[section describing metadata][Metadata].
 
 Alternatively, you can include an optional label of your choosing to help
 disambiguate cases where multiple headers have the same title:
@@ -568,26 +571,12 @@ does not attempt to interpret or make any use of any of these attributes.
 Also, you can't have a multiword attribute span a newline.
 
 
-## WikiLinks ##
+## WikiLinks (Deprecated)##
 
-MultiMarkdown includes support for "WikiLinks" for those who are using
-MultiMarkdown in a wiki environment, such as [Oddmuse][]. If `Use WikiLinks`
-is set to true in the metadata, then WikiWords, such as `ThisIsAWikiWord` will
-be used to create a link to the given page, using the `Base URL` metadata key
-to construct the URL. Additionally, you can use what Oddmuse refers to as
-"Free Links" --- rather than using "CamelCase" to define a link, you use
-brackets to designate a link with multiple words, e.g. `[[This Is A Free
-Link]]`.
 
-This feature is not really useful outside of a wiki environment.
 
-If you are using this, and want a word that happens to look like a WikiWord to
-be ignored, simply prepend a backslash, e.g. `\ThisIsNotAWikiWord`.
-
-[Oddmuse]: http://www.oddmuse.org/ "Oddmuse Homepage"
-
-**Note:** The WikiLinks feature has come to cause more trouble than it is
-worth. It will likely be deprecated, but one can still use the wiki software
+**Note:** The WikiLinks feature was more trouble than it was
+worth, and has been removed.  One can still use the wiki software
 to manage these links. For example, my [MultiMarkdown Extension] for [Oddmuse]
 supports Oddmuse styled WikiLinks.
 
@@ -1400,6 +1389,15 @@ Scrivener:
 [#Blount]: Literate and Latte - Scrivener.  
 <http://www.literatureandlatte.com/scrivener.html>
 
+## OmniOutliner ##
+
+I have written an export plugin for OmniOutliner that allows you to craft your
+MultiMarkdown documents within OmniOutliner, and then export to a text file
+(or folder with text file and images), that can then be processed with
+Markdown or MultiMarkdown.
+
+<http://fletcherpenney.net/multimarkdown/multimarkdown_and_omnioutliner/>
+
 ## TextMate ##
 
 [TextMate][] is a powerful text editor that:
@@ -1607,6 +1605,8 @@ improving Markdown and MultiMarkdown:
 *	Alex Melhuish
 *	Stephan Mueller
 *	Josh Brown
+*	Rob Person
+*	Matthew D. Rankin
 
 and others I have surely forgotten....
 
@@ -1659,11 +1659,6 @@ and others I have surely forgotten....
 * write a routine (that would be separate from MultiMarkdown) to download
   linked images, save them to a tmp directory, and then convert them for use
   within a pdf.
-
-* Consider adding the ability to only convert the first instance of a
-  `WikiWord` or `[[Free Link]]`, rather than each instance. I suppose this
-  would have to be grouped by level, however, which would complicate
-  things....
 
 * Decide on appropriate management of alignment when a cell spans multiple
   columns. Currently, the alignment of the first cell is used. (If Markdown
