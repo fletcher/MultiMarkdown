@@ -86,7 +86,11 @@ sub ProcessMMD2RTF {
 	if ($os =~ /MSWin/) {
 		$xslt = "| xsltproc -nonet -novalid XSLT\\$xslt_file -" if ($xslt_file ne "");
 		$MMDPath =~ s/\//\\/g;
-		open (MultiMarkdown, "| cd \"$MMDPath\" & perl -pi -e 's/(?<![ \\\\])\n/ \n/g' | perl bin\\MultiMarkdown.pl | perl bin\\$SmartyPants $xslt | perl -pi -e 's/(?<![ \.])(?<!\\\\[fsi]\\d)(?<!\\\\fs\\d\\d)  +/ /g' | perl -pi -e 's/\.   +/.  /g'  | perl -pi -e 's/^ +//mg' $out");
+		# TOD: This version won't crash on windows, but the regexp's aren't
+		# quite right.  I welcome input from Windows users but I'm tired of
+		# messing with it myself for the time being.
+		my $command = "| cd \"$MMDPath\" & perl -pi -e \"s/(?<![ \\\\])\\n/\\n/g\" | perl bin\\MultiMarkdown.pl | perl bin\\$SmartyPants $xslt | perl -pi -e \"s/(?<![ \\.])(?<!\\\\[fsi]\\d)(?<!\\\\fs\\d\\d)  +/ /g\" | perl -pi -e \"s/\\.   +/.  /g\"  | perl -pi -e \"s/^ +//mg\" $out";
+		open (MultiMarkdown, $command);
 	} else {
 		$xslt = "| xsltproc -nonet -novalid XSLT/$xslt_file -" if ($xslt_file ne "");
 		open (MultiMarkdown, "| cd \"$MMDPath\"; perl -pi -e 's/(?<![ #\\\\])\n/ \n/g' | bin/MultiMarkdown.pl | bin/$SmartyPants $xslt | perl -pi -e 's/(?<![ \.])(?<!\\\\[fsi]\\d)(?<!\\\\fs\\d\\d)  +/ /g' | perl -pi -e 's/\.   +/.  /g'  | perl -pi -e 's/^ +//mg' $out");
