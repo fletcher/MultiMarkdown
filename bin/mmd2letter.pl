@@ -157,7 +157,7 @@ sub LoadModule {
 	my $os = $^O;	# Mac = darwin; Linux = linux; Windows contains MSWin
 
 	if ($os =~ /MSWin/) {
-		# Not sure what I can do her
+		# Not sure what I can do here
 	} else {
 		unless (my $return = eval `cat "$file"`) {
 			warn "couldn't parse $file: $@" if $@;
