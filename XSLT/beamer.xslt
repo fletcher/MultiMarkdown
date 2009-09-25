@@ -44,10 +44,7 @@
 		<xsl:apply-templates select="html:html/html:head"/>
 		<xsl:apply-templates select="html:html/html:body"/>
 		<xsl:call-template name="latex-footer"/>
-%	Bibliography
-\bibliographystyle{\mybibliostyle}
-\bibliocommand
-</xsl:template>
+	</xsl:template>
 
 	<xsl:template match="html:body">
 		<body>
@@ -56,7 +53,15 @@
 	</xsl:template>
 
 	<xsl:template name="latex-footer">
-		<xsl:text>\end{document}
+		<xsl:text>\begin{frame}[allowframebreaks]
+\frametitle{Bibliography}
+
+%	Bibliography
+\bibliographystyle{\mybibliostyle}
+\bibliocommand
+\end{frame}
+
+\end{document}
 </xsl:text>
 	</xsl:template>
 
