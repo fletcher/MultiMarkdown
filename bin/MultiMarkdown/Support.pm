@@ -145,10 +145,10 @@ sub ProcessMMD2PDF {
 	# These are not all necessary for simple files, but are included to try
 	# and be as thorough as possible...  Sort of a poor man's latexmk.pl
 	
-	my $tex_string = "; pdflatex mmd.tex; makeindex -t mmd.glg -o mmd.gls -s mmd.ist mmd.glo; makeindex -s `kpsewhich basic.gst` -o mmd.gls mmd.glo; pdflatex mmd.tex; pdflatex mmd.tex; pdflatex mmd.tex; pdflatex mmd.tex";
+	my $tex_string = "; pdflatex mmd.tex; bibtex mmd; makeindex -t mmd.glg -o mmd.gls -s mmd.ist mmd.glo; makeindex -s `kpsewhich basic.gst` -o mmd.gls mmd.glo; pdflatex mmd.tex; pdflatex mmd.tex; pdflatex mmd.tex; pdflatex mmd.tex";
 
 	if ($^O =~ /MSWin/) {
-		$tex_string = "& pdflatex mmd.tex & makeindex -t mmd.glg -o mmd.gls -s mmd.ist mmd.glo & makeindex -s `kpsewhich basic.gst` -o mmd.gls mmd.glo & pdflatex mmd.tex & pdflatex mmd.tex & pdflatex mmd.tex & pdflatex mmd.tex";
+		$tex_string = "& pdflatex mmd.tex & bibtex mmd & makeindex -t mmd.glg -o mmd.gls -s mmd.ist mmd.glo & makeindex -s `kpsewhich basic.gst` -o mmd.gls mmd.glo & pdflatex mmd.tex & pdflatex mmd.tex & pdflatex mmd.tex & pdflatex mmd.tex";
 	}	
 	PDFEngine($MMDPath, $input_file, $tex_string, $text);
 
@@ -163,10 +163,10 @@ sub ProcessMMD2PDFXeLaTeX {
 	# These are not all necessary for simple files, but are included to try
 	# and be as thorough as possible...  Sort of a poor man's latexmk.pl
 
-	my $tex_string = "; xelatex mmd.tex; makeindex -t mmd.glg -o mmd.gls -s mmd.ist mmd.glo; makeindex -s `kpsewhich basic.gst` -o mmd.gls mmd.glo; xelatex mmd.tex; xelatex mmd.tex; xelatex mmd.tex; xelatex mmd.tex";
+	my $tex_string = "; xelatex mmd.tex; bibtex mmd; makeindex -t mmd.glg -o mmd.gls -s mmd.ist mmd.glo; makeindex -s `kpsewhich basic.gst` -o mmd.gls mmd.glo; xelatex mmd.tex; xelatex mmd.tex; xelatex mmd.tex; xelatex mmd.tex";
 
 	if ($^O =~ /MSWin/) {
-		$tex_string = "& xelatex mmd.tex & makeindex -t mmd.glg -o mmd.gls -s mmd.ist mmd.glo & makeindex -s `kpsewhich basic.gst` -o mmd.gls mmd.glo & xelatex mmd.tex & xelatex mmd.tex & xelatex mmd.tex & xelatex mmd.tex";
+		$tex_string = "& xelatex mmd.tex & bibtex mmd & makeindex -t mmd.glg -o mmd.gls -s mmd.ist mmd.glo & makeindex -s `kpsewhich basic.gst` -o mmd.gls mmd.glo & xelatex mmd.tex & xelatex mmd.tex & xelatex mmd.tex & xelatex mmd.tex";
 	}
 	PDFEngine($MMDPath, $input_file, $tex_string, $text);
 }
@@ -231,7 +231,9 @@ sub PDFEngine {
 	} else {
 		# Not in Windows
 		$temp_tex_file = "$temp_folder/mmd.tex";
-		@support_files = <$parent_folder/*.{bib,pdf,png,gif,jpg}>;
+		my $temp_parent_folder = $parent_folder;
+		$temp_parent_folder =~ s/ /\\ /g;
+		@support_files = <$temp_parent_folder/*.{bib,pdf,png,gif,jpg}>;
 	
 		# Try to be sure we have access to the LaTeX binaries in our PATH,
 		# especially if they were installed by Fink
