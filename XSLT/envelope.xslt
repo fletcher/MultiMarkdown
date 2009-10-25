@@ -68,6 +68,7 @@
 	<xsl:template name="latex-header">
 		<xsl:text>\usepackage{graphicx}			% To include graphics in pdf's (jpg, gif, png, etc)
 \usepackage[utf8]{inputenc}		% For UTF-8 support
+\usepackage[T1]{fontenc}		% Use T1 font encoding for accented characters
 \usepackage{xcolor}				% Allow for color (annotations)
 
 \def\myauthor{Author}			% In case these were not included in metadata
