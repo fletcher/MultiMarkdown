@@ -491,6 +491,7 @@
 
 	<!-- last paragraph in footnote does not need trailing space -->
 	<xsl:template match="html:p[last()][parent::html:li[parent::html:ol[parent::html:div[@class='footnotes']]]]">
+		<xsl:param name="footnoteId"/>
 		<xsl:apply-templates select="node()"/>
 	</xsl:template>
 
@@ -542,6 +543,7 @@
 
 	<!-- anchors -->
 	<xsl:template match="html:a[@href]">
+		<xsl:param name="footnoteId"/>
 		<xsl:choose>
 			<!-- footnote (my addition)-->
 			<xsl:when test="@class = 'footnote'">
