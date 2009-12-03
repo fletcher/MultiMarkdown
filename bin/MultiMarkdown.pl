@@ -2481,8 +2481,8 @@ sub _DoDefinitionLists {
 	my $definition = qr{
 		\n?[ ]{0,$less_than_tab}
 		\:[ \t]+(.*?)\n
-		((?=\n*[ ]{0,$less_than_tab}\S)|\n\n|\Z)	# Lookahead for non-space at line-start,
-		 											# two returns, or end of doc
+		((?=\n?\:)|\n|\Z)	# Lookahead for next definition, two returns,
+							# or the end of the document
 	}sx;
 	
 	my $definition_block = qr{
