@@ -664,6 +664,7 @@
 		
 	<!-- definition list - fake it for compatibility with XHTML version -->
 	<xsl:template match="html:dl">
+		\vspace{\baselineskip}
 		<xsl:apply-templates select="node()"/>
 		<xsl:text>
 
