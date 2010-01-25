@@ -1795,7 +1795,7 @@ sub _DoFootnotes {
 	$text =~ s{
 		\[\^(.+?)\]		# id = $1
 	}{
-		my $result;
+		my $result = "";
 		my $id = id2footnote($1);
 		if (defined $g_footnotes{$id} ) {
 			$g_footnote_counter++;
