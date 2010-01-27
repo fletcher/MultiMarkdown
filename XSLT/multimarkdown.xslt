@@ -11,7 +11,7 @@
 	TODO: support for tables
 	TODO: support for definition lists
 	TODO: support for glossary entries
-	TODO: support for image attributes
+	TODO: support for link/image attributes (and use a reference style link?)
 	TODO: support for MathML->ASCIIMathML???
 
 -->
@@ -33,6 +33,7 @@
    </xsl:variable>
    
    <xsl:template match="/">
+	<xsl:apply-templates select="h:html/h:head"/>
       <xsl:apply-templates select="h:html/h:body/node()">
          <xsl:with-param name="context" select="markdown"/>
       </xsl:apply-templates>
@@ -391,7 +392,37 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
-   
+
+	<xsl:template match="h:head">
+		<xsl:apply-templates match="h:meta"/>
+		<xsl:text>
+
+</xsl:text>
+</xsl:template>
+
+	<xsl:template match="h:head/h:link">
+		<xsl:text>css:	</xsl:text>
+		<xsl:value-of select="@href"/>
+		<xsl:text>
+</xsl:text>
+	</xsl:template>
+
+	<xsl:template match="h:meta">
+		<xsl:value-of select="@name"/>
+		<xsl:text>:	</xsl:text>
+		<xsl:value-of select="@content"/>
+		<xsl:text>
+</xsl:text>
+	</xsl:template>
+
+	<xsl:template match="h:title">
+		<xsl:text>Title:	</xsl:text>
+		<xsl:value-of select="."/>
+		<xsl:text>
+</xsl:text>
+	</xsl:template>
+
+
 	<!-- The following template is taken from the book "XSLT" by Doug Tidwell (O'Reilly and Associates, August 2001, ISBN 0-596-00053-7) -->
 	<xsl:template name="replace-substring">
 		<xsl:param name="original"/>
