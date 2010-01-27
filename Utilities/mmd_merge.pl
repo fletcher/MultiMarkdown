@@ -16,10 +16,32 @@ use warnings;
 my $data = "";
 my $line = "";
 
-foreach(@ARGV) {
-	open(INPUT, "<$_");
+my $count = @ARGV;
 
-	while ($line = <INPUT>) {
+if ($count == 0) {
+	# We're in "stdin mode"
+
+	# process stdin
+	undef $/;
+	my $data .= <>;
+
+	mergeLines($data);
+} else {
+	foreach(@ARGV) {
+		open(INPUT, "<$_");
+		local $/;
+		my $data = <INPUT>;
+		close(INPUT);
+		mergeLines($data);
+	}
+}
+
+
+sub mergeLines {
+	my $file = shift;
+	
+	while ($file =~ /^(.*?)$/mg) {
+		$line = $1;
 		if (($line !~ /^\s*$/) && ($line !~ /^\#/)) {
 			$line =~ s/ {4}/\t/g;
 			$line =~ s/\s*$//;
@@ -39,11 +61,8 @@ foreach(@ARGV) {
 		}
 	}
 	
-	close INPUT;
+	print $data;
 }
-
-print $data;
-
 
 =head1 NAME
 
