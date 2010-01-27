@@ -41,7 +41,7 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xhtml="http://www.w3.org/1999/xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
-  	exclude-result-prefixes="xhtml xsl"
+	exclude-result-prefixes="xhtml xsl"
 	version="1.0">
 
 	<xsl:variable name="newline">
