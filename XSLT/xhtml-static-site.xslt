@@ -73,9 +73,8 @@
 				<div class="date"><xsl:value-of select="/xhtml:html/xhtml:head/xhtml:meta[translate(@name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = 'date']/@content"/>
 				</div>
 			</xsl:if>
-			<xsl:if test="/xhtml:html/xhtml:head/xhtml:meta[translate(@name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = 'tags-disabled']/@content != ''">
-				<div class="tags">Tags: <xsl:value-of select="/xhtml:html/xhtml:head/xhtml:meta[translate(@name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = 'tags']/@content"/>
-				</div>
+			<xsl:if test="/xhtml:html/xhtml:head/xhtml:meta[translate(@name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = 'tags']/@content != ''">
+				<xsl:text disable-output-escaping="yes"><![CDATA[<!--#include virtual="/cgi/tags.cgi" -->]]></xsl:text>
 			</xsl:if>
 			<xsl:apply-templates select="@*|node()"/>
 			<xsl:text disable-output-escaping="yes"><![CDATA[<!--#include virtual="/templates/footer.html" -->]]></xsl:text>
