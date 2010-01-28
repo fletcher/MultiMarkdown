@@ -170,7 +170,7 @@ unless ($@) {
 		my $plugin = new MT::Plugin({
 			name => "MultiMarkdown",
 			description => "Based on the original Markdown",
-			doc_link => 'http://fletcherpenney.net/MultiMarkdown/'
+			doc_link => 'http://fletcherpenney.net/multimarkdown/'
 		});
 		MT->add_plugin( $plugin );
 	}
