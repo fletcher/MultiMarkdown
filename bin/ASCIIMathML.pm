@@ -1,19 +1,5 @@
 package Text::ASCIIMathML;
 
-# The Text::ASCIIMathML module is copyright (c) 2006 Mark Nodine,
-# USA. All rights reserved.
-
-# You may use and distribute them under the terms of either the GNU
-# General Public License or the Artistic License, as specified in the
-# Perl README file.
-
-# Included in the MultiMarkdown package by Fletcher T. Penney
-
-# $Id: ASCIIMathML.pm 499 2008-03-23 13:03:19Z fletcher $
-
-# MultiMarkdown Version 2.0.b6
-
-
 =pod
 =head1 NAME
 
@@ -132,6 +118,8 @@ symbols. The other expressions are converted as follows:
  S1^S2	  ->	<msup>S1 S2'</msup>
  S1_S2^S3 ->	<msubsup>S1 S2' S3'</msubsup> or
 		 <munderover>S1 S2' S3'</munderover> (in some cases)
+ S1^S2_S3 ->	<msubsup>S1 S3' S2'</msubsup> or
+		 <munderover>S1 S3' S2'</munderover> (in some cases)
 
 =back
 
@@ -303,6 +291,7 @@ min max
  O/	  Null set					&empty;
  oo       Infinity					&infin;
  aleph	  Hebrew letter aleph				&alefsym;
+ &        Ampersand					&amp;
  /_	  Angle						&ang;
  :.	  Therefore					&there4;
  ...	  Ellipsis					...
@@ -430,6 +419,36 @@ be in one of the forms "#rgb" or "#rrggbb", or an html-color-name, or
 the keyword "transparent".
 
 
+=head1 METHODS
+
+=head2 C<Text::ASCIIMathML>
+
+=head3 C<TextToMathML($text, [$math_attr], [$mstyle_attr])>
+
+Converts C<$text> to a MathML string. If the optional C<$math_attr>
+argument is provided, it should be a reference to a hash of
+attribute/value pairs for the C< <math> > node.  If the optional
+C<$mstyle_attr> argument is provided, it should be a reference to a
+hash of attribute/value pairs for the C< <mstyle> > node.
+
+=head3 C<TextToMathMLTree($text, [$math_attr], [$mstyle_attr])>
+
+Like C<TextToMathMLTree> except that instead of returning a string, it
+returns a C<Text::ASCIIMathML::Node> representing the parsed MathML
+structure.  
+
+=head2 C<Text::ASCIIMathML::Node>
+
+=head3 C<text>
+
+Returns a MathML string representing the parsed MathML structure
+encoded by the C<Text::ASCIIMathML::Node>.
+
+=head3 C<latex>
+
+Returns a LaTeX string representing the parsed MathML structure
+encoded by the C<Text::ASCIIMathML::Node>. 
+
 =head1 BUGS AND SUGGESTIONS
 
 If you find bugs, think of anything that could improve Text::ASCIIMathML
@@ -464,7 +483,7 @@ Perl README file.
 use strict;
 use warnings;
 
-our $VERSION = '0.5';
+our $VERSION = '0.81';
 
 # Creates a new Text::ASCIIMathML parser object
 sub new {
@@ -501,14 +520,17 @@ sub TextToMathMLTree : method {
     my ($self, $expr, $mathAttr, $mstyleAttr) = @_;
     $expr = '' unless defined $expr;
     my $mstyle = $self->_createElementMathML('mstyle');
-    $mstyle->setAttribute(@$mstyleAttr) if $mstyleAttr;
+    $mstyle->setAttribute
+	(ref $mstyleAttr eq 'ARRAY' ? @$mstyleAttr : %$mstyleAttr)
+	if $mstyleAttr;
     $self->{nestingDepth} = 0;
     $expr =~ s/^\s+//;
     $mstyle->appendChild(($self->_parseExpr($expr, 0))[0]);
     return unless $mstyle->childNodes > 0;
     my $math = $self->_createMmlNode('math', $mstyle);
     $expr =~ s/\n\s*//g;
-    $math->setAttribute(@$mathAttr) if $mathAttr;
+    $math->setAttribute(ref $mathAttr eq 'ARRAY' ? @$mathAttr : %$mathAttr)
+	if $mathAttr;
     
     return $math;
 }
@@ -671,6 +693,8 @@ my %AMSymbol = (
 "<" => { tag=>"mo", output=>"&lt;",      tex=>'', ttype=>"CONST" },
 "gt" => { tag=>"mo", output=>"&gt;",      tex=>'', ttype=>"CONST" },
 ">" => { tag=>"mo", output=>"&gt;",      tex=>'', ttype=>"CONST" },
+"\\!" => { tag=>"", output=>'',   tex=>'', ttype=>"NOP" },
+
 
 # logical symbols
 "and" => { tag=>"mtext", output=>"and", tex=>'', ttype=>"SPACE" },
@@ -718,6 +742,7 @@ my %AMSymbol = (
 "..." => { tag=>"mo", output=>"...",    tex=>"ldots", ttype=>"CONST" },
 ":." => { tag=>"mo", output=>"&#x2234;",  tex=>"therefore", ttype=>"CONST" },
 "/_" => { tag=>"mo", output=>"&#x2220;",  tex=>"angle", ttype=>"CONST" },
+"&"  => { tag=>"mo", output=>"&amp;",     tex=>'\&',    ttype=>"CONST" },
 "\\ " => { tag=>"mo", output=>"&#x00A0;", tex=>'\,', ttype=>"CONST" },
 "quad" => { tag=>"mo", output=>"&#x00A0;&#x00A0;", tex=>'', ttype=>"CONST" },
 "qquad" => { tag=>"mo", output=>"&#x00A0;&#x00A0;&#x00A0;&#x00A0;", tex=>'', ttype=>"CONST" },
@@ -810,10 +835,10 @@ sub _getSymbol_ : method {
     for ($str) {
         /^(\d+(\.\d+)?)/ || /^(\.\d+)/
 	    and return $1, {tag=>'mn', output=>$1, ttype=>'CONST'};
-	/^($Ident_RE)/o and
-	    return $1,$AMTexSym{$1} ? $AMSymbol{$AMTexSym{$1}} : $AMSymbol{$1};
 	$self->{Definition_RE} && /^($self->{Definition_RE})/ and
 	    return $1, $self->{Definitions}{$1};
+	/^($Ident_RE)/o and
+	    return $1,$AMTexSym{$1} ? $AMSymbol{$AMTexSym{$1}} : $AMSymbol{$1};
         /^([A-Za-z])/ and
 	    return $1, {tag=>'mi', output=>$1, ttype=>'CONST'};
         /^(.)/ and 
@@ -994,6 +1019,26 @@ sub _parseIexpr : method {
 	    else {
 		$node = $self->_createMmlNode
 		    ($underover ? 'munder' : 'msub', $node);
+		$node->appendChild($result[0]);
+	    }
+	}
+	elsif ($input eq '^') {
+	    my ($in2, $sym2) = $self->_getSymbol($str);
+	    my $underover = $sym1->{ttype} eq 'UNDEROVER';
+	    if ($in2 eq '_') {
+		$str = _removeCharsAndBlanks($str, length $in2);
+		my @res2 = $self->_parseSexpr($str);
+		_removeBrackets($res2[0]);
+		$str = $res2[1];
+		$node = $self->_createMmlNode
+		    ($underover ? 'munderover' : 'msubsup', $node);
+		$node->appendChild($res2[0]);
+		$node->appendChild($result[0]);
+		$node = $self->_createMmlNode('mrow',$node); # so sum does not stretch
+	    }
+	    else {
+		$node = $self->_createMmlNode
+		    ($underover ? 'mover' : 'msup', $node);
 		$node->appendChild($result[0]);
 	    }
 	}
@@ -1218,6 +1263,10 @@ sub _parseSexpr : method {
 	# the "|" is a \mid
 	return $node, $str;
     }
+    if ($ttype eq 'NOP') {
+	$str = _removeCharsAndBlanks($str, length $input);
+	return $self->_parseSexpr($str);
+    }
     $str = _removeCharsAndBlanks($str, length $input);
     return $self->_createMmlNode
 	($symbol->{tag}, # it's a constant
@@ -1244,7 +1293,7 @@ sub _removeBrackets {
 sub _removeCharsAndBlanks {
     my ($str, $n) = @_;
     my $st = substr($str, 
-		    substr($str, $n) =~ /^\\[^\\ ,]/ ? $n+1 : $n);
+		    substr($str, $n) =~ /^\\[^\\ ,!]/ ? $n+1 : $n);
     $st =~ s/^[\x00-\x20]+//;
     return $st;
 }
@@ -1448,6 +1497,7 @@ sub latex : method {
 		    "\\"       => '\backslash',
 		    '&lt;'     => '<',
 		    '&gt;'     => '>',
+		    '&amp;'    => '\&',
 		    '...'      => '\ldots',
 		    );
     }
@@ -1457,6 +1507,7 @@ sub latex : method {
 	$text =~ s/(&\#x.*?;)/
 	    defined $parser->{Latex}{$1} ? $parser->{Latex}{$1} :
 	    defined $LatexSym{$1} ? $LatexSym{$1} : $1/eg;
+	$text =~ s/([\#])/\\$1/;
 	return $text;
     }
     my $tag = $self->{tag};
