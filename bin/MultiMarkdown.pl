@@ -982,7 +982,7 @@ sub _DoHeaders {
 	#	  Header 2
 	#	  --------
 	#
-	$text =~ s{ ^(.+?)(?:\s\[([^\[]*?)\])?[ \t]*\n=+[ \t]*\n+ }{
+	$text =~ s{ ^(.+?)(?:\s*(?<!\\)\[([^\[]*?)\])?[ \t]*\n=+[ \t]*\n+ }{
 		if (defined $2) {
 			$label = Header2Label($2);
 		} else {
@@ -1003,7 +1003,7 @@ sub _DoHeaders {
 		"<h$h_level$idString>"  .  $header  .  "</h$h_level>\n\n";
 	}egmx;
 
-	$text =~ s{ ^(.+?)(?:\s*\[([^\[]*?)\])?[ \t]*\n-+[ \t]*\n+ }{
+	$text =~ s{ ^(.+?)(?:\s*(?<!\\)\[([^\[]*?)\])?[ \t]*\n-+[ \t]*\n+ }{
 		if (defined $2) {
 			$label = Header2Label($2);
 		} else {
@@ -1038,7 +1038,7 @@ sub _DoHeaders {
 			[ \t]*
 			(.+?)		# $2 = Header text
 			[ \t]*
-			(?:\[([^\[]*?)\])?	# $3 = optional label for cross-reference
+			(?:(?<!\\)\[([^\[]*?)\])?	# $3 = optional label for cross-reference
 			[ \t]*
 			\#*			# optional closing #'s (not counted)
 			\n+
