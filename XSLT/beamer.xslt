@@ -53,20 +53,20 @@
 	</xsl:template>
 
 	<xsl:template name="latex-footer">
-		<xsl:text>\begin{frame}[allowframebreaks]
-\frametitle{Bibliography}
+%		<xsl:text>\begin{frame}[allowframebreaks]
+%\frametitle{Bibliography}
 
 %	Bibliography
-\bibliographystyle{\mybibliostyle}
-\bibliocommand
-\end{frame}
+%\bibliographystyle{\mybibliostyle}
+%\bibliocommand
+%\end{frame}
 
 \end{document}
 </xsl:text>
 	</xsl:template>
 
 	<xsl:template name="latex-document-class">
-		<xsl:text>\documentclass[ignorenonframetext,12pt]{beamer}
+		<xsl:text>\documentclass[ignorenonframetext,11pt]{beamer}
 %\documentclass[onesided]{article}
 %\usepackage{graphicx}
 %\usepackage{beamerarticle}
@@ -76,6 +76,7 @@
 \usepackage{tabulary}		% Support longer table cells
 \usepackage{booktabs}		% Support better tables
 
+\usepackage{subfigure}
 
 \let\oldSubtitle\subtitle
 
@@ -354,6 +355,42 @@
 		<xsl:text>\end{figure}
 	</xsl:text>
 		</xsl:template>
+
+	<xsl:template match="html:img" mode="images">
+		<xsl:if test="@id">
+			<xsl:text>\label{</xsl:text>
+			<xsl:value-of select="@id"/>
+			<xsl:text>}
+</xsl:text>
+		</xsl:if>
+	<xsl:text>\subfigure</xsl:text>
+		<xsl:if test="@title">
+			<xsl:if test="not(@title = '')">
+				<xsl:text>[</xsl:text>
+				<xsl:apply-templates select="@title"/>
+				<xsl:text>]</xsl:text>
+			</xsl:if>
+		</xsl:if>
+		<xsl:text>{\includegraphics[keepaspectratio,width=\textwidth, height=.75\textheight]{</xsl:text>
+		<xsl:value-of select="@src"/>
+		<xsl:text>}}\quad
+</xsl:text>
+	</xsl:template>
+
+	<!-- paragraph with multiple images -->
+	<xsl:template match="html:p[count(child::html:img) > '1']">
+		<xsl:text>\begin{figure}
+\begin{center}
+</xsl:text>
+		
+		<xsl:apply-templates select="node()" mode="images"/>
+		<xsl:text>\end{center}
+\end{figure}
+</xsl:text>
+		<xsl:value-of select="$newline"/>
+		<xsl:value-of select="$newline"/>
+		<xsl:value-of select="$newline"/>
+	</xsl:template>
 
 	<xsl:template match="html:div[@class='bibliography']">
 		<!-- close the preceding frame first - we want to be our own slide(s) -->
