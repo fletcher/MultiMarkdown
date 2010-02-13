@@ -46,7 +46,7 @@
 </xsl:text>
 	</xsl:variable>
 	
-	<xsl:output method='xml' version="1.0" doctype-public="-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" doctype-system="http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd" indent="no"/>
+	<xsl:output method='xml' encoding="ISO-8859-1" version="1.0" doctype-public="-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" doctype-system="http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd" indent="no"/>
 
 	<!-- the identity template, based on http://www.xmlplease.com/xhtmlxhtml -->
 
@@ -59,13 +59,13 @@
 	<xsl:template match="xhtml:head">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
-			<xsl:text disable-output-escaping="yes"><![CDATA[<!--#include virtual="/templates/head.html" -->]]></xsl:text>
+			<xsl:text disable-output-escaping="yes"><![CDATA[<!--#include virtual="${Base_URL}/templates/head.html" -->]]></xsl:text>
 		</xsl:copy>
 	</xsl:template>
 
 	<xsl:template match="xhtml:body">
 		<xsl:copy>
-			<xsl:text disable-output-escaping="yes"><![CDATA[<!--#include virtual="/templates/header.html" -->]]></xsl:text>
+			<xsl:text disable-output-escaping="yes"><![CDATA[<!--#include virtual="${Base_URL}/templates/header.html" -->]]></xsl:text>
 			<xsl:if test="/xhtml:html/xhtml:head/xhtml:title != ''">
 				<h1 class="page-title"><xsl:value-of select="/xhtml:html/xhtml:head/xhtml:title"/></h1>
 			</xsl:if>
@@ -74,10 +74,10 @@
 				</div>
 			</xsl:if>
 			<xsl:if test="/xhtml:html/xhtml:head/xhtml:meta[translate(@name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = 'tags']/@content != ''">
-				<xsl:text disable-output-escaping="yes"><![CDATA[<!--#include virtual="/cgi/tags.cgi" -->]]></xsl:text>
+				<xsl:text disable-output-escaping="yes"><![CDATA[<!--#include virtual="${Base_URL}/cgi/tags.cgi" -->]]></xsl:text>
 			</xsl:if>
 			<xsl:apply-templates select="@*|node()"/>
-			<xsl:text disable-output-escaping="yes"><![CDATA[<!--#include virtual="/templates/footer.html" -->]]></xsl:text>
+			<xsl:text disable-output-escaping="yes"><![CDATA[<!--#include virtual="${Base_URL}/templates/footer.html" -->]]></xsl:text>
 		</xsl:copy>
 	</xsl:template>
 	
