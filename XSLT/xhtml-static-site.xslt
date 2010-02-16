@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 
 <!-- XHTML-to-XHTML converter by Fletcher Penney
 	specifically designed for use with MultiMarkdown created XHTML
@@ -46,7 +46,7 @@
 </xsl:text>
 	</xsl:variable>
 	
-	<xsl:output method='xml' encoding="ISO-8859-1" version="1.0" doctype-public="-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" doctype-system="http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd" indent="no"/>
+	<xsl:output method='xml' encoding="ASCII" version="1.0" doctype-public="-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" doctype-system="http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd" indent="no"/>
 
 	<!-- the identity template, based on http://www.xmlplease.com/xhtmlxhtml -->
 
