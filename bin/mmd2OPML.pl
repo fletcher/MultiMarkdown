@@ -246,7 +246,7 @@ Fletcher T. Penney, E<lt>owner@fletcherpenney.netE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2009 by Fletcher T. Penney
+Copyright (C) 2010 by Fletcher T. Penney
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

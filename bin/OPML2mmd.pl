@@ -170,14 +170,8 @@ This  script is  designed as  a  "reversal" for  MultiMarkdown generated  OPML
 files. It can convert a series of text files from OPML back into MultiMarkdown
 text files.
 
-This  utility makes  use  of  a modified  version  of  'markdown.xsl' ---  the
-XHTML-to-Markdown converter by Andrew Green, Article Seven.
 
 =head1 SEE ALSO
-
-Original xsl by Andrew Green:
-
-<http://www.article7.co.uk/>
 
 Designed for use with MultiMarkdown.
 
