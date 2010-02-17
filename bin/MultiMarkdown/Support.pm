@@ -204,6 +204,44 @@ sub ProcessXHTML2MMD {
 	close (MultiMarkdown);	
 }
 
+
+sub ProcessOPML2MMD {
+	my $MMDPath = shift;
+	my $input_file = shift;
+	my $text = shift;
+	
+	# Preserve tab characters
+	$text =~ s/\t/&#9;/g;
+	
+	my $output_file = "";
+	$output_file = _Input2Output($input_file, "txt") if ($input_file ne "");
+	
+	my $xslt_file = "opml2mmd.xslt";
+	
+	# Generate the pipe command and run
+	
+	my $os = $^O;
+	my $xslt = "";
+	my $out = "";
+	
+	if ($input_file ne "") {
+		$out = "> \"$output_file\"";
+	}
+	
+	if ($os =~ /MSWin/) {
+		$xslt = "| xsltproc -nonet -novalid XSLT\\$xslt_file -" if ($xslt_file ne "");
+		$MMDPath =~ s/\//\\/g;
+		open (MultiMarkdown, "| cd \"$MMDPath\" & xsltproc -nonet -novalid XSLT\\$xslt_file - $out");
+	} else {
+		$xslt = "| xsltproc -nonet -novalid XSLT/$xslt_file -" if ($xslt_file ne "");
+		open (MultiMarkdown, "| cd \"$MMDPath\"; xsltproc -nonet -novalid XSLT/$xslt_file - $out");
+	}
+	
+	print MultiMarkdown $text;
+	close (MultiMarkdown);	
+}
+
+
 sub PDFEngine {
 	my $MMDPath = shift;
 	my $input_file = shift;
