@@ -112,6 +112,14 @@
 \fi
 
 
+\AtBeginSubsection[]
+{
+   \begin{frame}
+       \frametitle{Outline}
+       \tableofcontents[currentsection,currentsubsection]
+   \end{frame}
+}
+
 %\title{\mytitle}
 
 % Show "current/total" slide counter in footer
@@ -157,34 +165,20 @@
 	<!-- Convert headers into chapters, etc -->
 
 	<xsl:template match="html:h1">
-		<!-- Only show a part if it contains a section -->
-		<xsl:if test="count(following-sibling::*[local-name() = 'h2'][1]/following-sibling::*) &gt; count(following-sibling::*[local-name() = 'h1'][1]/following-sibling::*)">		
-			<xsl:text>\part{</xsl:text>
-			<xsl:value-of select="substring(node(),1,(string-length(node()) - 1))"/>
-			<xsl:text>}</xsl:text>
-			<xsl:value-of select="$newline"/>
-			<xsl:text>\label{</xsl:text>
-			<xsl:value-of select="@id"/>
-			<xsl:text>}</xsl:text>
-			<xsl:value-of select="$newline"/>
-			<xsl:value-of select="$newline"/>
+		<xsl:text>\part{</xsl:text>
+		<xsl:value-of select="."/>
+		<xsl:text>}</xsl:text>
+		<xsl:value-of select="$newline"/>
+		<xsl:text>\label{</xsl:text>
+		<xsl:value-of select="@id"/>
+		<xsl:text>}</xsl:text>
+		<xsl:value-of select="$newline"/>
+		<xsl:value-of select="$newline"/>
+		<xsl:text>\frame{\partpage}
+</xsl:text>
+		<xsl:variable name="children" select="count(following-sibling::*) - count(following-sibling::*[local-name() = 'h1' or local-name() = 'h2' or local-name() = 'h3' or local-name() = 'h4' or local-name() = 'h5' or local-name() = 'h6'][1]/following-sibling::*) - count(following-sibling::*[local-name() = 'h1' or local-name() = 'h2' or local-name() = 'h3' or local-name() = 'h4' or local-name() = 'h5' or local-name() = 'h6'][1])"/>
 
-			<xsl:text>
-\frame{
-</xsl:text>
-			<xsl:if test="substring(node(), (string-length(node()) - string-length('*')) + 1) != '*'">
-				<xsl:text>\frametitle{</xsl:text>
-<xsl:apply-templates select="node()"/>
-<xsl:text>}
-</xsl:text>
-			</xsl:if>
-			<xsl:text>\tableofcontents
-}
-</xsl:text>
-			<xsl:variable name="children" select="count(following-sibling::*) - count(following-sibling::*[local-name() = 'h1' or local-name() = 'h2' or local-name() = 'h3' or local-name() = 'h4' or local-name() = 'h5' or local-name() = 'h6'][1]/following-sibling::*) - count(following-sibling::*[local-name() = 'h1' or local-name() = 'h2' or local-name() = 'h3' or local-name() = 'h4' or local-name() = 'h5' or local-name() = 'h6'][1])"/>
-
-			<xsl:apply-templates select="following-sibling::*[position() &lt;= $children]"/>
-		</xsl:if>
+		<xsl:apply-templates select="following-sibling::*[position() &lt;= $children]"/>
 	</xsl:template>
 	
 	<xsl:template match="html:h2">
@@ -395,6 +389,8 @@
 	<xsl:template match="html:div[@class='bibliography']">
 		<!-- close the preceding frame first - we want to be our own slide(s) -->
 		<xsl:text>\end{frame}
+
+\part{Bibliography}
 \begin{frame}[allowframebreaks]
 \frametitle{Bibliography}
 \begin{thebibliography}{</xsl:text>
