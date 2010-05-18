@@ -64,6 +64,9 @@
 
 	<xsl:template name="latex-title">
 			<xsl:text>
+\chapterstyle{\mychapterstyle}
+\pagestyle{\mypagestyle}
+
 % Title
 \mainmatter
 
