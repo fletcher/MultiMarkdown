@@ -663,35 +663,23 @@
 	</xsl:template>
 		
 	<!-- definition list - fake it for compatibility with XHTML version -->
-	<xsl:template match="html:dl">
-		\vspace{\baselineskip}
-		<xsl:apply-templates select="node()"/>
-		<xsl:text>
+    <xsl:template match="html:dl">\begin{description}
+        <xsl:apply-templates select="node()"/>
+        <xsl:text>\end{description}
+            </xsl:text>
+    </xsl:template>
 
-</xsl:text>
-	</xsl:template>
-	
-	<xsl:template match="html:dt">
-		<xsl:text>\noindent\textbf{</xsl:text>
-		<xsl:apply-templates select="node()"/>
-		<xsl:text>}
-</xsl:text>
-	</xsl:template>
+    <xsl:template match="html:dt">
+        <xsl:text>\item[</xsl:text>
+        <xsl:apply-templates select="node()"/>
+        <xsl:text>]</xsl:text>
+    </xsl:template>
 
-	<xsl:template match="html:dt[following-sibling::*[1][local-name() = 'dt']]">
-		<xsl:text>\noindent\textbf{</xsl:text>
-		<xsl:apply-templates select="node()"/>
-		<xsl:text>} \\
-</xsl:text>
-	</xsl:template>
-	
-	<xsl:template match="html:dd">
-		<xsl:text>\begin{quotation}
-</xsl:text>
-		<xsl:apply-templates select="node()"/>
-		<xsl:text>\end{quotation}
-</xsl:text>
-	</xsl:template>
+    <xsl:template match="html:dd">
+        <xsl:text> </xsl:text>
+        <xsl:apply-templates select="node()"/>
+        <xsl:text></xsl:text>
+    </xsl:template>
 
 	<!-- code span -->
 	<xsl:template match="html:code">
