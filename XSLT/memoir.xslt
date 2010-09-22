@@ -45,10 +45,9 @@
 	</xsl:template>
 
 	<xsl:template name="latex-footer">
-		<xsl:text>%
-% Back Matter
-%
+		<xsl:text>
 
+% 	Back Matter
 \backmatter
 %\appendixpage
 
@@ -57,20 +56,22 @@
 \bibliocommand
 
 %	Glossary
-\printglossary
-
+\printglossaries
 
 %	Index
 \printindex
-
 \end{document}
+
 </xsl:text>
 	</xsl:template>
 
 	<xsl:template name="latex-document-class">
 		<xsl:text>\documentclass[10pt,oneside]{memoir}
 \usepackage{layouts}[2001/04/29]
-\makeglossary
+\usepackage{glossaries}
+\glstoctrue
+\makeglossaries
+
 \makeindex
 
 \def\mychapterstyle{default}
@@ -407,14 +408,29 @@
 
 	<!-- Memoir handles glossaries differently -->
 
+		<!-- this is slightly messy, but it works: extracts glossary term, and insert it into a \glsadd{} command -->
+
 	<xsl:template match="html:li" mode="glossary">
 		<xsl:param name="footnoteId"/>
 		<xsl:if test="parent::html:ol/parent::html:div/@class = 'footnotes'">
 			<xsl:if test="concat('#',@id) = $footnoteId">
 				<xsl:apply-templates select="html:span[@class='glossary sort']" mode="glossary"/>
 				<xsl:apply-templates select="html:span[@class='glossary name']" mode="glossary"/>
-				<xsl:text>{</xsl:text>
+				<xsl:variable name="glsname">
+					<xsl:apply-templates select="html:span[@class='glossary name']" mode="glossary"/>
+				</xsl:variable>
+				<xsl:text>,</xsl:text>
+				<xsl:text>description={</xsl:text>
 				<xsl:apply-templates select="html:p" mode="glossary"/>
+				<xsl:text>}} </xsl:text>
+				<xsl:variable name="glsbf">
+					<xsl:value-of select="substring-after($glsname,'{')"/>
+					</xsl:variable>
+				<xsl:variable name="glsclean">
+					<xsl:value-of select="substring-before($glsbf,'}')"/>
+					</xsl:variable>
+				<xsl:text>\glsadd{</xsl:text>
+				<xsl:value-of select="$glsclean"/>
 				<xsl:text>}</xsl:text>
 			</xsl:if>
 		</xsl:if>
@@ -424,8 +440,10 @@
 		<xsl:text>{</xsl:text>
 		<xsl:apply-templates select="node()"/>
 		<xsl:text>}</xsl:text>
+		<xsl:text>{</xsl:text>
+		<xsl:text>name=</xsl:text>
+		<xsl:apply-templates select="node()"/>
 	</xsl:template>
-	
 	<xsl:template match="html:span[@class='glossary sort']" mode="glossary">
 		<xsl:text>(</xsl:text>
 		<xsl:apply-templates select="node()"/>

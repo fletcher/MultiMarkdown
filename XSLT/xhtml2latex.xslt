@@ -555,7 +555,7 @@
 			</xsl:when>
 
 			<xsl:when test="@class = 'footnote glossary'">
-				<xsl:text>\glossary</xsl:text>
+				<xsl:text>\newglossaryentry</xsl:text>
 				<xsl:apply-templates select="/html:html/html:body/html:div[@class]/html:ol/html:li[@id]" mode="glossary">
 					<xsl:with-param name="footnoteId" select="@href"/>
 				</xsl:apply-templates>
