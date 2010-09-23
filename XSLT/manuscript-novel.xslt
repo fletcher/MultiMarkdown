@@ -57,7 +57,7 @@
 \bibliocommand
 
 %	Glossary
-% \printglossary
+% \printglossaries
 
 
 %	Index
@@ -71,7 +71,8 @@
 		<xsl:text>\documentclass[10pt,oneside]{memoir}
 \usepackage{layouts}[2001/04/29]
 \usepackage{manuscript}
-\makeglossary
+\usepackage{glossaries}
+\makeglossaries
 \makeindex
 
 \def\revision{}

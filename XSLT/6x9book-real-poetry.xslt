@@ -118,7 +118,7 @@
 \bibliocommand
 
 %	Glossary
-\printglossary
+\printglossaries
 
 
 %	Indexes
@@ -136,7 +136,8 @@
 		<xsl:text>\documentclass[10pt,twoside]{memoir}
 \usepackage{layouts}[2001/04/29]
 \usepackage{modified-bringhurst}   % Available from http://fletcherpenney.net/
-\makeglossary
+\usepackage{glossaries}
+\makeglossaries
 \makeindex
 \makeindex[firstlines]
 
