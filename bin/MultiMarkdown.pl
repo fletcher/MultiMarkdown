@@ -423,7 +423,8 @@ sub _StripLinkDefinitions {
 						(?:\n+|\Z)
 					}
 					{}mx) {
-		$g_urls{lc $1} = _EncodeAmpsAndAngles( $2 );	# Link IDs are case-insensitive
+#		$g_urls{lc $1} = _EncodeAmpsAndAngles( $2 );	# Link IDs are case-insensitive
+		$g_urls{lc $1} = $2;	# Link IDs are case-insensitive
 		if ($3) {
 			$g_titles{lc $1} = $3;
 			$g_titles{lc $1} =~ s/"/&quot;/g;
@@ -1891,7 +1892,7 @@ sub xhtmlMetaData {
 	# This screws up xsltproc - make sure to use `-nonet -novalid` if you
 	#	have difficulty
 	if ($g_allow_mathml) {
-		 $result .= qq{<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"\n\t"http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
+		 $result .= qq{<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"\n\t"http://www.w3.org/TR/2001/REC-MathML2-20010221/dtd/xhtml-math11-f.dtd">
 \n};
 	
 		$result.= qq{<html xmlns="http://www.w3.org/1999/xhtml">\n\t<head>\n};
@@ -1918,7 +1919,8 @@ sub xhtmlMetaData {
 		} elsif (lc($export_key) eq "xhtmlheader") {
 			$result .= "\t\t$g_metadata{$key}\n";
 		} else {
-			$result.= qq!\t\t<meta name="$export_key" content="$g_metadata{$key}"$g_empty_element_suffix\n!;
+			my $encodedMeta = _EncodeAmpsAndAngles($g_metadata{$key});
+			$result.= qq!\t\t<meta name="$export_key" content="$encodedMeta"$g_empty_element_suffix\n!;
 		}
 	}
 	$result.= "\t</head>\n";
