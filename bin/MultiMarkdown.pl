@@ -37,7 +37,7 @@ eval {require MT};  # Test to see if we're running in MT.
 unless ($@) {
 	require Text::ASCIIMathML;
 } else {	# Otherwise look for ASCIIMathML.pm next to MultiMarkdown.pl
-	my $me = $0;				# Where am I?
+	my $me = __FILE__;				# Where am I?
 
 	# Am I running in Windoze?
 	my $os = $^O;
