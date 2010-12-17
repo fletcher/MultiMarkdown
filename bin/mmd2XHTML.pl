@@ -82,6 +82,7 @@ sub LocateMMD {
 	# Determine where MMD is installed.  Use a "common installation"
 	# if available.
 
+	my $sym = dirname(readlink($me));
 	$me = dirname($me);
 
 	if ($os =~ /MSWin/) {
@@ -111,6 +112,8 @@ sub LocateMMD {
 		
 		if ( -f "$me/MultiMarkdown/Support.pm") {
 			$MMDPath = "$me/..";
+		} elsif ( -f "$sym/MultiMarkdown/Support.pm") {
+			$MMDPath = "$sym/..";
 		}
 		
 		# Next, look in user's home directory, then in common directories
