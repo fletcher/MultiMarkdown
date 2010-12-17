@@ -27,15 +27,14 @@ use strict;
 use warnings;
 
 use File::Basename;
+use File::Spec;
 use Cwd;
 use Cwd 'abs_path';
 
-
 # Determine where MMD is installed.  Use a "common installation" if available.
 
-my $me = $0;		# Where is this script located?
+my $me = readlink(__FILE__);		# Where is this script located?
 my $MMDPath = LocateMMD($me);
-
 
 # Determine whether we are in "file mode" or "stdin mode"
 
@@ -87,57 +86,34 @@ sub LocateMMD {
 	# Determine where MMD is installed.  Use a "common installation"
 	# if available.
 
-	my $sym = dirname(readlink($me));
-	print STDERR "sym: $sym \n";
 	$me = dirname($me);
 
-	if ($os =~ /MSWin/) {
-		# We're running Windows
-	
-		# First check our directory to see if we're running inside MMD
-		
-		if ( -f "$me\\MultiMarkdown\\Support.pm") {
-			$MMDPath = "$me\\..";
-		}
-		
-		# Next, look in user's home directory, then in common directories
-		if ($MMDPath eq "") {
-			if ( -d "$ENV{HOMEDRIVE}$ENV{HOMEPATH}\\MultiMarkdown") {
-				$MMDPath = "$ENV{HOMEDRIVE}$ENV{HOMEPATH}\\MultiMarkdown";
-			} elsif ( -d "$ENV{HOMEDRIVE}\\Documents and Settings\\All Users\\MultiMarkdown") {
-				$MMDPath = "$ENV{HOMEDRIVE}\\Documents and Settings\\All Users\\MultiMarkdown";
-			}
-		}
+	my @candidates = ();
 
-		# Load the MultiMarkdown::Support.pm module
-		do "$MMDPath\\bin\\MultiMarkdown\\Support.pm" if ($MMDPath ne "");
+	if ( -f File::Spec->join($me, 'MultiMarkdown.pl') ) {
+		$MMDPath = dirname($me);
 	} else {
-		# We're running Mac OS X or some *nix
-		
-		# First check our directory to see if we're running inside MMD
-		
-		if ( -f "$me/MultiMarkdown/Support.pm") {
-			$MMDPath = "$me/..";
-		} elsif ( -f "$sym/MultiMarkdown/Support.pm") {
-			$MMDPath = "$sym/..";
-		}
-		
 		# Next, look in user's home directory, then in common directories
-		if ($MMDPath eq "") {
+		if ($os =~ /MSWin/) {
+			# We're running Windows
+			push @candidates, "$ENV{HOMEDRIVE}$ENV{HOMEPATH}\\MultiMarkdown";
+			push @candidates, "$ENV{HOMEDRIVE}\\Documents and Settings\\All Users\\MultiMarkdown";
+
+		} else {
+			# We're running Mac OS X or some *nix
 			if (defined($ENV{HOME})) {
-				if ( -d "$ENV{HOME}/Library/Application Support/MultiMarkdown") {
-					$MMDPath = "$ENV{HOME}/Library/Application Support/MultiMarkdown";
-				} elsif ( -d "$ENV{HOME}/.multimarkdown") {
-					$MMDPath = "$ENV{HOME}/.multimarkdown";	
-				}
+				push @candidates, "$ENV{HOME}/Library/Application Support/MultiMarkdown";
+				push @candidates, "$ENV{HOME}/.multimarkdown";
+				push @candidates, "/Library/Application Support/MultiMarkdown";
+				push @candidates, "/usr/share/multimarkdown";
 			}
-			if ($MMDPath eq "") {
-				if ( -d "/Library/Application Support/MultiMarkdown") {
-					$MMDPath = "/Library/Application Support/MultiMarkdown";
-				} elsif ( -d "/usr/share/multimarkdown") {
-					$MMDPath = "/usr/share/multimarkdown";
-				}
-			}
+		}
+	}
+
+	foreach (@candidates) {
+		if (-d $_) {
+			$MMDPath = $_;
+			last;
 		}
 	}
 
@@ -146,28 +122,11 @@ sub LocateMMD {
 	} else {
 		# Load the MultiMarkdown::Support.pm module
 		$MMDPath = abs_path($MMDPath);
-		LoadModule("$MMDPath/bin/MultiMarkdown/Support.pm");
+		unshift (@INC, File::Spec->join($MMDPath, 'lib'));
+		require MultiMarkdown::Support;
 	}
-
-	# Clean up the path
-	$MMDPath = abs_path($MMDPath);
 
 	return $MMDPath;
-}
-
-sub LoadModule {
-	my $file = shift;
-	my $os = $^O;	# Mac = darwin; Linux = linux; Windows contains MSWin
-
-	if ($os =~ /MSWin/) {
-		# Not sure what I can do here
-	} else {
-		unless (my $return = eval `cat "$file"`) {
-			warn "couldn't parse $file: $@" if $@;
-			warn "couldn't do $file: $!" unless defined $return;
-			warn "couldn't run $file" unless $return;
-		}
-	}
 }
 
 =head1 NAME
