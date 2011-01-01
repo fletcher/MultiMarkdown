@@ -53,11 +53,10 @@ unless ($@) {
 
 
 use Digest::MD5 qw(md5_hex);
-use vars qw($VERSION $g_use_metadata $g_base_url
-	$g_bibliography_title $g_allow_mathml $g_base_header_level $mathParser);
-$VERSION = '2.0.b6';
 
-$mathParser = new Text::ASCIIMathML();
+our $VERSION = '2.0.b6';
+
+our $mathParser = new Text::ASCIIMathML();
 
 ## Disabled; causes problems under Perl 5.6.1:
 # use utf8;
@@ -66,10 +65,10 @@ $mathParser = new Text::ASCIIMathML();
 #
 # Global default settings:
 #
-my $g_empty_element_suffix = " />";     # Change to ">" for HTML output
-my $g_tab_width = 4;
-my $g_allow_mathml = 1;
-my $g_base_header_level = 1;
+our $g_empty_element_suffix = " />";     # Change to ">" for HTML output
+our $g_tab_width = 4;
+our $g_allow_mathml = 1;
+our $g_base_header_level = 1;
 
 #
 # Globals:
@@ -77,7 +76,7 @@ my $g_base_header_level = 1;
 
 # Reusable patterns to match balanced [brackets] and (parens). See
 # Friedl's "Mastering Regular Expressions", 2nd Ed., pp. 328-331.
-my ($g_nested_brackets, $g_nested_parens);
+our ($g_nested_brackets, $g_nested_parens);
 $g_nested_brackets = qr{
 	(?> 								# Atomic matching
 	   [^\[\]]+							# Anything other than brackets
@@ -101,37 +100,38 @@ $g_nested_parens = qr{
 
 
 # Table of hash values for escaped characters:
-my %g_escape_table;
+our %g_escape_table;
 foreach my $char (split //, '\\`*_{}[]()>#+-.!') {
 	$g_escape_table{$char} = md5_hex($char);
 }
 
 
 # Global hashes, used by various utility routines
-my %g_urls = ();
-my %g_titles= ();
-my %g_html_blocks = ();
-my %g_metadata = ();
-my %g_metadata_newline = ();
-my %g_crossrefs = ();
-my %g_footnotes = ();
-my %g_attributes = ();
-my @g_used_footnotes = ();
-my $g_footnote_counter = 0;
+our %g_urls = ();
+our %g_titles= ();
+our %g_html_blocks = ();
+our %g_metadata = ();
+our %g_metadata_newline = ();
+our %g_crossrefs = ();
+our %g_footnotes = ();
+our %g_attributes = ();
+our @g_used_footnotes = ();
+our $g_footnote_counter = 0;
 
-my $g_citation_counter = 0;
-my @g_used_references = ();
-my %g_references = ();
-$g_bibliography_title = "Bibliography";
+our $g_citation_counter = 0;
+our @g_used_references = ();
+our %g_references = ();
+our $g_bibliography_title = "Bibliography";
 
-$g_use_metadata = 1;
+our $g_use_metadata = 1;
 $g_metadata_newline{default} = "\n";
 $g_metadata_newline{keywords} = ", ";
-my $g_document_format = "";
+our $g_document_format = "";
+our $g_base_url = "";
 
 # Used to track when we're inside an ordered or unordered list
 # (see _ProcessListItems() for details):
-my $g_list_level = 0;
+our $g_list_level = 0;
 
 
 #### Blosxom plug-in interface ##########################################
@@ -140,7 +140,7 @@ my $g_list_level = 0;
 # which posts Markdown should process, using a "meta-markup: markdown"
 # header. If it's set to 0 (the default), Markdown will process all
 # entries.
-my $g_blosxom_use_meta = 0;
+our $g_blosxom_use_meta = 0;
 
 sub start { 1; }
 sub story {
