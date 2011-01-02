@@ -60,10 +60,18 @@ our $mathParser = new Text::ASCIIMathML();
 #
 # Global default settings:
 #
-our $g_empty_element_suffix = " />";     # Change to ">" for HTML output
-our $g_tab_width = 4;
-our $g_allow_mathml = 1;
-our $g_base_header_level = 1;
+our %g_settings = () ;
+
+sub reset_defaults {
+	$g_settings{empty_element_suffix} = " />";     # Change to ">" for HTML output
+	$g_settings{tab_width} = 4;
+	$g_settings{allow_mathml} = 1;
+	$g_settings{base_header_level} = 1;
+	$g_settings{use_metadata} = 1;
+	$g_settings{bibliography_title} = "Bibliography";
+	$g_settings{document_format} = "";
+	$g_settings{base_url} = "";
+}
 
 #
 # Globals:
@@ -116,13 +124,9 @@ our $g_footnote_counter = 0;
 our $g_citation_counter = 0;
 our @g_used_references = ();
 our %g_references = ();
-our $g_bibliography_title = "Bibliography";
 
-our $g_use_metadata = 1;
 $g_metadata_newline{default} = "\n";
 $g_metadata_newline{keywords} = ", ";
-our $g_document_format = "";
-our $g_base_url = "";
 
 # Used to track when we're inside an ordered or unordered list
 # (see _ProcessListItems() for details):
@@ -139,10 +143,11 @@ sub Markdown {
 
 	my %opts = @_;
 
-	if (defined $opts{empty_element_suffix}) {
-		$g_empty_element_suffix = $opts{empty_element_suffix};
-	}
+	reset_defaults();
 
+	foreach (keys %opts) {
+		$g_settings{$_} = $opts{$_};
+	}
 
 	# Clear the global hashes. If we don't clear these, you get conflicts
 	# from other articles when generating a page which contains more than
@@ -161,7 +166,6 @@ sub Markdown {
 	$g_citation_counter = 0;
 	%g_attributes = ();
 
-
 	# Standardize line endings:
 	$text =~ s{\r\n}{\n}g; 	# DOS to Unix
 	$text =~ s{\r}{\n}g; 	# Mac to Unix
@@ -179,7 +183,7 @@ sub Markdown {
 	$text =~ s/^[ \t]+$//mg;
 	
 	# Strip out MetaData
-	$text = _ParseMetaData($text) if $g_use_metadata;
+	$text = _ParseMetaData($text) if $g_settings{use_metadata};
 
 	# And recheck for leading blank lines
 	$text =~ s/^\n+//s;
@@ -214,12 +218,12 @@ sub Markdown {
 		
 	$text = _ConvertCopyright($text);
 	
-	if (lc($g_document_format) =~ /^complete\s*$/i) {
+	if (lc($g_settings{document_format}) =~ /^complete\s*$/i) {
 		return xhtmlMetaData() . "<body>\n\n" . $text . "\n</body>\n</html>";
-	} elsif (lc($g_document_format) =~ /^snippet\s*$/i) {
+	} elsif (lc($g_settings{document_format}) =~ /^snippet\s*$/i) {
 		return $text . "\n";
 	} else {
-		return $g_document_format . textMetaData() . $text . "\n";
+		return $g_settings{document_format} . textMetaData() . $text . "\n";
 	}
 	
 }
@@ -231,7 +235,7 @@ sub _StripLinkDefinitions {
 # hash references.
 #
 	my $text = shift;
-	my $less_than_tab = $g_tab_width - 1;
+	my $less_than_tab = $g_settings{tab_width} - 1;
 
 	# Link defs are in the form: ^[id]: url "optional title"
 	while ($text =~ s{
@@ -292,7 +296,7 @@ sub _StripHTML {
 
 sub _HashHTMLBlocks {
 	my $text = shift;
-	my $less_than_tab = $g_tab_width - 1;
+	my $less_than_tab = $g_settings{tab_width} - 1;
 
 	# Hashify HTML blocks:
 	# We only want to do this for block-level HTML tags, such as headers,
@@ -454,9 +458,9 @@ sub _RunBlockGamut {
 	$text = _HashHTMLBlocks($text);
 
 	# Do Horizontal Rules:
-	$text =~ s{^[ ]{0,2}([ ]?\*[ ]?){3,}[ \t]*$}{\n<hr$g_empty_element_suffix\n}gmx;
-	$text =~ s{^[ ]{0,2}([ ]? -[ ]?){3,}[ \t]*$}{\n<hr$g_empty_element_suffix\n}gmx;
-	$text =~ s{^[ ]{0,2}([ ]? _[ ]?){3,}[ \t]*$}{\n<hr$g_empty_element_suffix\n}gmx;
+	$text =~ s{^[ ]{0,2}([ ]?\*[ ]?){3,}[ \t]*$}{\n<hr$g_settings{empty_element_suffix}\n}gmx;
+	$text =~ s{^[ ]{0,2}([ ]? -[ ]?){3,}[ \t]*$}{\n<hr$g_settings{empty_element_suffix}\n}gmx;
+	$text =~ s{^[ ]{0,2}([ ]? _[ ]?){3,}[ \t]*$}{\n<hr$g_settings{empty_element_suffix}\n}gmx;
 
 	$text = _DoDefinitionLists($text);
 	$text = _DoLists($text);
@@ -499,7 +503,7 @@ sub _RunSpanGamut {
 	$text = _DoItalicsAndBold($text);
 
 	# Do hard breaks:
-	$text =~ s/ {2,}\n/ <br$g_empty_element_suffix\n/g;
+	$text =~ s/ {2,}\n/ <br$g_settings{empty_element_suffix}\n/g;
 
 	return $text;
 }
@@ -747,7 +751,7 @@ sub _DoImages {
 				$result .=  " title=\"$title\"";
 			}
 			$result .= _DoAttributes($link_id);
-			$result .= $g_empty_element_suffix;		
+			$result .= $g_settings{empty_element_suffix};		
 		}
 		else {
 			# If there's no such link ID, leave intact:
@@ -802,7 +806,7 @@ sub _DoImages {
 			$title =~ s!  _ !$g_escape_table{'_'}!gx;
 			$result .=  " title=\"$title\"";
 		}
-		$result .= $g_empty_element_suffix;
+		$result .= $g_settings{empty_element_suffix};
 
 		$result;
 	}xsge;
@@ -840,7 +844,7 @@ sub _DoHeaders {
 		} else {
 			$idString = "";
 		}
-		my $h_level = $g_base_header_level;
+		my $h_level = $g_settings{base_header_level};
 		
 		"<h$h_level$idString>"  .  $header  .  "</h$h_level>\n\n";
 	}egmx;
@@ -862,7 +866,7 @@ sub _DoHeaders {
 			$idString = "";
 		}
 		
-		my $h_level = $g_base_header_level +1;
+		my $h_level = $g_settings{base_header_level} +1;
 		
 		"<h$h_level$idString>"  .  $header  .  "</h$h_level>\n\n";
 	}egmx;
@@ -885,7 +889,7 @@ sub _DoHeaders {
 			\#*			# optional closing #'s (not counted)
 			\n+
 		}{
-			my $h_level = length($1) + $g_base_header_level - 1;
+			my $h_level = length($1) + $g_settings{base_header_level} - 1;
 			if (defined $3) {
 				$label = Header2Label($3);
 			} else {
@@ -914,7 +918,7 @@ sub _DoLists {
 # Form HTML ordered (numbered) and unordered (bulleted) lists.
 #
 	my $text = shift;
-	my $less_than_tab = $g_tab_width - 1;
+	my $less_than_tab = $g_settings{tab_width} - 1;
 
 	# Re-usable patterns to match list item bullets and number markers:
 	my $marker_ul  = qr/[*+-]/;
@@ -1083,11 +1087,11 @@ sub _DoCodeBlocks {
 			(?:\n\n|\A)
 			(	            # $1 = the code block -- one or more lines, starting with a space/tab
 			  (?:
-			    (?:[ ]{$g_tab_width} | \t)  # Lines must start with a tab or a tab-width of spaces
+			    (?:[ ]{$g_settings{tab_width}} | \t)  # Lines must start with a tab or a tab-width of spaces
 			    .*\n+
 			  )+
 			)
-			((?=^[ ]{0,$g_tab_width}\S)|\Z)	# Lookahead for non-space at line-start, or end of doc
+			((?=^[ ]{0,$g_settings{tab_width}}\S)|\Z)	# Lookahead for non-space at line-start, or end of doc
 		}{
 			my $codeblock = $1;
 			my $result; # return value
@@ -1522,7 +1526,7 @@ sub _Outdent {
 #
 	my $text = shift;
 
-	$text =~ s/^(\t|[ ]{1,$g_tab_width})//gm;
+	$text =~ s/^(\t|[ ]{1,$g_settings{tab_width}})//gm;
 	return $text;
 }
 
@@ -1534,7 +1538,7 @@ sub _Detab {
 #
 	my $text = shift;
 
-	$text =~ s{(.*?)\t}{$1.(' ' x ($g_tab_width - length($1) % $g_tab_width))}ge;
+	$text =~ s{(.*?)\t}{$1.(' ' x ($g_settings{tab_width} - length($1) % $g_settings{tab_width}))}ge;
 	return $text;
 }
 
@@ -1554,7 +1558,7 @@ sub _ParseMetaData {
 		# If "Format: complete" was added automatically, don't force first 
 		#	line of text to be metadata
 		$g_metadata{$1}= "complete";
-		$g_document_format = "complete";
+		$g_settings{document_format} = "complete";
 	}
 	
 	foreach my $line ( split /\n/, $text ) {
@@ -1567,17 +1571,17 @@ sub _ParseMetaData {
 				$currentKey =~ s/\s$//;
 				$g_metadata{$currentKey} = $meta;
 				if (lc($currentKey) eq "format") {
-					$g_document_format = lc($g_metadata{$currentKey});
+					$g_settings{document_format} = lc($g_metadata{$currentKey});
 				}
 				if (lc($currentKey) eq "base url") {
-					$g_base_url = $g_metadata{$currentKey};
+					$g_settings{base_url} = $g_metadata{$currentKey};
 				}
 				if (lc($currentKey) eq "bibliography title") {
-					$g_bibliography_title = $g_metadata{$currentKey};
-					$g_bibliography_title =~ s/\s*$//;
+					$g_settings{bibliography_title} = $g_metadata{$currentKey};
+					$g_settings{bibliography_title} =~ s/\s*$//;
 				}
 				if (lc($currentKey) eq "base header level") {
-					$g_base_header_level = $g_metadata{$currentKey};
+					$g_settings{base_header_level} = $g_metadata{$currentKey};
 				}
 				if (!$g_metadata_newline{$currentKey}) {
 					$g_metadata_newline{$currentKey} = $g_metadata_newline{default};
@@ -1603,7 +1607,7 @@ sub _ParseMetaData {
 
 sub _StripFootnoteDefinitions {
 	my $text = shift;
-	my $less_than_tab = $g_tab_width - 1;
+	my $less_than_tab = $g_settings{tab_width} - 1;
 
 	while ($text =~ s{
 		\n[ ]{0,$less_than_tab}\[\^([^\n]+?)\]\:[ \t]*# id = $1
@@ -1615,7 +1619,7 @@ sub _StripFootnoteDefinitions {
 	{
 		my $id = $1;
 		my $footnote = "$2\n";
-		$footnote =~ s/^[ ]{0,$g_tab_width}//gm;
+		$footnote =~ s/^[ ]{0,$g_settings{tab_width}}//gm;
 	
 		$g_footnotes{id2footnote($id)} = $footnote;
 	}
@@ -1700,7 +1704,7 @@ sub _PrintFootnotes{
 	$result .= "</ol>\n</div>";
 
 	if ($footnote_counter > 0) {
-		$result = "\n\n<div class=\"footnotes\">\n<hr$g_empty_element_suffix\n<ol>\n\n".$result;
+		$result = "\n\n<div class=\"footnotes\">\n<hr$g_settings{empty_element_suffix}\n<ol>\n\n".$result;
 	} else {
 		$result = "";
 	}	
@@ -1732,7 +1736,7 @@ sub xhtmlMetaData {
 
 	# This screws up xsltproc - make sure to use `-nonet -novalid` if you
 	#	have difficulty
-	if ($g_allow_mathml) {
+	if ($g_settings{allow_mathml}) {
 		 $result .= qq{<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"\n\t"http://www.w3.org/TR/2001/REC-MathML2-20010221/dtd/xhtml-math11-f.dtd">
 \n};
 	
@@ -1756,12 +1760,12 @@ sub xhtmlMetaData {
 		if (lc($key) eq "title") {
 			$result.= "\t\t<title>" . _EncodeAmpsAndAngles($g_metadata{$key}) . "</title>\n";
 		} elsif (lc($key) eq "css") {
-			$result.= "\t\t<link type=\"text/css\" rel=\"stylesheet\" href=\"$g_metadata{$key}\"$g_empty_element_suffix\n";
+			$result.= "\t\t<link type=\"text/css\" rel=\"stylesheet\" href=\"$g_metadata{$key}\"$g_settings{empty_element_suffix}\n";
 		} elsif (lc($export_key) eq "xhtmlheader") {
 			$result .= "\t\t$g_metadata{$key}\n";
 		} else {
 			my $encodedMeta = _EncodeAmpsAndAngles($g_metadata{$key});
-			$result.= qq!\t\t<meta name="$export_key" content="$encodedMeta"$g_empty_element_suffix\n!;
+			$result.= qq!\t\t<meta name="$export_key" content="$encodedMeta"$g_settings{empty_element_suffix}\n!;
 		}
 	}
 	$result.= "\t</head>\n";
@@ -1796,7 +1800,7 @@ sub _ConvertCopyright{
 
 sub _DoTables {
 	my $text = shift;
-	my $less_than_tab = $g_tab_width - 1;
+	my $less_than_tab = $g_settings{tab_width} - 1;
 	
 	# Algorithm inspired by PHP Markdown Extra's table support
 	# <http://www.michelf.com/projects/php-markdown/>
@@ -1913,22 +1917,22 @@ sub _DoTables {
 			}
 			if ($cell =~ /\:$/) {
 				if ($cell =~ /^\:/) {
-					$result .= " align=\"center\"$g_empty_element_suffix\n";
+					$result .= " align=\"center\"$g_settings{empty_element_suffix}\n";
 					push(@alignments,"center");
 				} else {
-					$result .= " align=\"right\"$g_empty_element_suffix\n";
+					$result .= " align=\"right\"$g_settings{empty_element_suffix}\n";
 					push(@alignments,"right");
 				}
 			} else {
 				if ($cell =~ /^\:/) {
-					$result .= " align=\"left\"$g_empty_element_suffix\n";
+					$result .= " align=\"left\"$g_settings{empty_element_suffix}\n";
 					push(@alignments,"left");
 				} else {
 					if (($cell =~ /^\./) || ($cell =~ /\.$/)) {
-						$result .= " align=\"char\"$g_empty_element_suffix\n";
+						$result .= " align=\"char\"$g_settings{empty_element_suffix}\n";
 						push(@alignments,"char");
 					} else {
-						$result .= "$g_empty_element_suffix\n";
+						$result .= "$g_settings{empty_element_suffix}\n";
 						push(@alignments,"");
 					}
 				}
@@ -2057,7 +2061,7 @@ sub _DoAttributes{
 
 sub _StripMarkdownReferences {
 	my $text = shift;
-	my $less_than_tab = $g_tab_width - 1;
+	my $less_than_tab = $g_settings{tab_width} - 1;
 
 	while ($text =~ s{
 		\n\[\#(.+?)\]:[ \t]*	# id = $1
@@ -2070,7 +2074,7 @@ sub _StripMarkdownReferences {
 		my $id = $1;
 		my $reference = "$2\n";
 
-		$reference =~ s/^[ ]{0,$g_tab_width}//gm;
+		$reference =~ s/^[ ]{0,$g_settings{tab_width}}//gm;
 		
 		$reference = _RunBlockGamut($reference);
 
@@ -2167,7 +2171,7 @@ sub _PrintMarkdownBibliography{
 	$result .= "</div>";
 
 	if ($citation_counter > 0) {
-		$result = "\n\n<div class=\"bibliography\">\n<hr$g_empty_element_suffix\n<p>$g_bibliography_title</p>\n\n".$result;
+		$result = "\n\n<div class=\"bibliography\">\n<hr$g_settings{empty_element_suffix}\n<p>$g_settings{bibliography_title}</p>\n\n".$result;
 	} else {
 		$result = "";
 	}	
@@ -2312,7 +2316,7 @@ sub _DoDefinitionLists {
 	# Uses the syntax proposed by Michel Fortin in PHP Markdown Extra
 	
 	my $text = shift;
-	my $less_than_tab = $g_tab_width -1;
+	my $less_than_tab = $g_settings{tab_width} -1;
 	
 	my $line_start = qr{
 		[ ]{0,$less_than_tab}
@@ -2369,7 +2373,7 @@ sub _DoDefinitionLists {
 				$definition
 			}{
 				my $def = $1 . "\n";
-				$def =~ s/^[ ]{0,$g_tab_width}//gm;
+				$def =~ s/^[ ]{0,$g_settings{tab_width}}//gm;
 				"<dd>\n" . _RunBlockGamut($def) . "\n</dd>\n";
 			}xsge;
 			
