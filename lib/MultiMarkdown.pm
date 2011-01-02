@@ -32,6 +32,7 @@ use strict;
 use warnings;
 
 use File::Basename;
+use File::Spec;
 
 eval {require MT};  # Test to see if we're running in MT.
 unless ($@) {
@@ -39,16 +40,8 @@ unless ($@) {
 } else {	# Otherwise look for ASCIIMathML.pm next to MultiMarkdown.pl
 	my $me = __FILE__;				# Where am I?
 
-	# Am I running in Windoze?
-	my $os = $^O;
-
-	# Get just the directory portion
-	if ($os =~ /MSWin/) {
-		$me = dirname($me) . "\\";
-	} else {
-		$me = dirname($me) . "/"; 
-	}
-	require $me ."ASCIIMathML.pm";
+	my $path = dirname($me);
+	require File::Spec->join($path, "ASCIIMathML.pm");
 }
 
 
