@@ -2317,6 +2317,8 @@ sub _DoDefinitionLists {
 	
 	my $text = shift;
 	my $less_than_tab = $g_settings{tab_width} -1;
+
+	return $text unless $text =~ /\n[ ]{0,$less_than_tab}\:[ \t]+/;
 	
 	my $line_start = qr{
 		[ ]{0,$less_than_tab}
