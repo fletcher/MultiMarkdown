@@ -62,9 +62,9 @@ our $mathParser = new Text::ASCIIMathML();
 # Friedl's "Mastering Regular Expressions", 2nd Ed., pp. 328-331.
 our ($g_nested_brackets, $g_nested_parens);
 $g_nested_brackets = qr{
-	(?> 								# Atomic matching
+	(?>								# Atomic matching
 	   [^\[\]]+							# Anything other than brackets
-	 | 
+	 |
 	   \[
 		 (??{ $g_nested_brackets })		# Recursive set of nested brackets
 	   \]
@@ -73,9 +73,9 @@ $g_nested_brackets = qr{
 
 # Doesn't allow for whitespace, because we're using it to match URLs:
 $g_nested_parens = qr{
-	(?> 								# Atomic matching
+	(?>								# Atomic matching
 	   [^()\s]+							# Anything other than parens or whitespace
-	 | 
+	 |
 	   \(
 		 (??{ $g_nested_parens })		# Recursive set of nested brackets
 	   \)
@@ -280,7 +280,7 @@ sub _StripLinkDefinitions {
 							[")]
 							[ \t]*
 						)?	# title is optional
-						
+
 						# MultiMarkdown addition for attribute support
 						\n?
 						(				# Attributes = $4
@@ -298,7 +298,7 @@ sub _StripLinkDefinitions {
 			$self->{_titles}{lc $1} = $3;
 			$self->{_titles}{lc $1} =~ s/"/&quot;/g;
 		}
-		
+
 		# MultiMarkdown addition "
 		if ($4) {
 			$self->{_attributes}{lc $1} = $4;
@@ -312,9 +312,9 @@ sub _StripLinkDefinitions {
 sub _StripHTML {
 	# Strip (X)HTML code from string
 	my $text = shift;
-	
+
 	$text =~ s/<.*?>//g;
-	
+
 	return $text;
 }
 
@@ -330,7 +330,7 @@ our $g_block_tags = qr{
 		dl        |  ol      |  ul      |  script      |  noscript  |  form   |
 		fieldset  |  iframe     |  ins         |  del
 	  )
-	}x;			# MultiMarkdown does not include `math` in the above list so that 
+	}x;			# MultiMarkdown does not include `math` in the above list so that
 				# Equations can optionally be included in separate paragraphs
 
 our $g_tag_attrs = qr{
@@ -394,7 +394,7 @@ sub _HashHTMLBlocks {
 
 
 	# Special case just for <hr />. It was easier to make a special case than
-	# to make the other regex more complicated.	
+	# to make the other regex more complicated.
 	$text =~ s{
 				(?:
 					(?<=\n\n)		# Starting after a blank line
@@ -405,7 +405,7 @@ sub _HashHTMLBlocks {
 					[ ]{0,$less_than_tab}
 					<(hr)				# start tag = $2
 					\b					# word break
-					([^<>])*?			# 
+					([^<>])*?			#
 					/?>					# the matching end tag
 					[ \t]*
 					(?=\n{2,}|\Z)		# followed by a blank line or end of document
@@ -479,7 +479,7 @@ sub _RunBlockGamut {
 	# Do tables first to populate the table id's for cross-refs
 	# Escape <pre><code> so we don't get greedy with tables
 	$text = $self->_DoTables($text);
-	
+
 	# And now, protect our tables
 	$text = $self->_HashHTMLBlocks($text);
 
@@ -635,14 +635,14 @@ sub _DoAnchors {
 		    ($g_nested_brackets)	# link text = $2
 		  \]
 		  \(			# literal paren
-		  	[ \t]*
+			[ \t]*
 			($g_nested_parens)		# href = $3
-		  	[ \t]*
+			[ \t]*
 			(			# $4
 			  (['"])	# quote char = $5
 			  (.*?)		# Title = $6
 			  \5		# matching quote
-  		  	  [ \t]*	# ignore any spaces/tabs between closing quote and )
+			  [ \t]*	# ignore any spaces/tabs between closing quote and )
 			)?			# title is optional
 		  \)
 		)
@@ -650,7 +650,7 @@ sub _DoAnchors {
 		my $result;
 		my $whole_match = $1;
 		my $link_text   = $2;
-		my $url	  		= $3;
+		my $url			= $3;
 		my $title		= $6;
 
 		$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
@@ -762,13 +762,13 @@ sub _DoImages {
 			my $url = $self->{_urls}{$link_id};
 			$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
 			$url =~ s!  _ !$g_escape_table{'_'}!gx;		# conflicting with italics/bold.
-			
+
 			my $label = Header2Label($alt_text);
 			$self->{_crossrefs}{$label} = "#$label";
 			if (! defined $self->{_titles}{$link_id}) {
 				$self->{_titles}{$link_id} = $alt_text;
 			}
-			
+
 			$result = "<img id=\"$label\" src=\"$url\" alt=\"$alt_text\"";
 			if (defined $self->{_titles}{$link_id}) {
 				my $title = $self->{_titles}{$link_id};
@@ -798,9 +798,9 @@ sub _DoImages {
 		  \]
 		  \s?			# One optional whitespace character
 		  \(			# literal paren
-		  	[ \t]*
+			[ \t]*
 			($g_nested_parens)		# href = $3
-		  	[ \t]*
+			[ \t]*
 			(			# $4
 			  (['"])	# quote char = $5
 			  (.*?)		# title = $6
@@ -813,7 +813,7 @@ sub _DoImages {
 		my $result;
 		my $whole_match = $1;
 		my $alt_text    = $2;
-		my $url	  		= $3;
+		my $url			= $3;
 		my $title		= (defined $6) ? $6 : '';
 
 		$alt_text =~ s/"/&quot;/g;
@@ -825,7 +825,7 @@ sub _DoImages {
 		my $label = Header2Label($alt_text);
 		$self->{_crossrefs}{$label} = "#$label";
 #		$self->{_titles}{$label} = $alt_text;			# I think this line should not be here
-			
+
 		$result = "<img id=\"$label\" src=\"$url\" alt=\"$alt_text\"";
 		if (defined $title) {
 			$title =~ s! \* !$g_escape_table{'*'}!gx;
@@ -846,11 +846,11 @@ sub _DoHeaders {
 	my $header = "";
 	my $label = "";
 	my $idString = "";
-		
+
 	# Setext-style headers:
 	#	  Header 1
 	#	  ========
-	#  
+	#
 	#	  Header 2
 	#	  --------
 	#
@@ -862,7 +862,7 @@ sub _DoHeaders {
 		}
 		$header = $self->_RunSpanGamut($1);
 		$header =~ s/^\s*//s;
-		
+
 		if ($label ne "") {
 			$self->{_crossrefs}{$label} = "#$label";
 			$self->{_titles}{$label} = _StripHTML($header);
@@ -871,7 +871,7 @@ sub _DoHeaders {
 			$idString = "";
 		}
 		my $h_level = $self->{base_header_level};
-		
+
 		"<h$h_level$idString>"  .  $header  .  "</h$h_level>\n\n";
 	}egmx;
 
@@ -883,7 +883,7 @@ sub _DoHeaders {
 		}
 		$header = $self->_RunSpanGamut($1);
 		$header =~ s/^\s*//s;
-		
+
 		if ($label ne "") {
 			$self->{_crossrefs}{$label} = "#$label";
 			$self->{_titles}{$label} = _StripHTML($header);
@@ -891,9 +891,9 @@ sub _DoHeaders {
 		} else {
 			$idString = "";
 		}
-		
+
 		my $h_level = $self->{base_header_level} +1;
-		
+
 		"<h$h_level$idString>"  .  $header  .  "</h$h_level>\n\n";
 	}egmx;
 
@@ -923,7 +923,7 @@ sub _DoHeaders {
 			}
 			$header = $self->_RunSpanGamut($2);
 			$header =~ s/^\s*//s;
-			
+
 			if ($label ne "") {
 				$self->{_crossrefs}{$label} = "#$label";
 				$self->{_titles}{$label} = _StripHTML($header);
@@ -1104,7 +1104,7 @@ sub _ProcessListItems {
 sub _DoCodeBlocks {
 #
 #	Process Markdown `<pre><code>` blocks.
-#	
+#
 
 	my ($self, $text) = @_;
 
@@ -1137,27 +1137,27 @@ sub _DoCodeBlocks {
 
 sub _DoCodeSpans {
 #
-# 	*	Backtick quotes are used for <code></code> spans.
-# 
-# 	*	You can use multiple backticks as the delimiters if you want to
-# 		include literal backticks in the code span. So, this input:
-#     
+#	*	Backtick quotes are used for <code></code> spans.
+#
+#	*	You can use multiple backticks as the delimiters if you want to
+#		include literal backticks in the code span. So, this input:
+#
 #         Just type ``foo `bar` baz`` at the prompt.
-#     
-#     	Will translate to:
-#     
+#
+#	Will translate to:
+#
 #         <p>Just type <code>foo `bar` baz</code> at the prompt.</p>
-#     
+#
 #		There's no arbitrary limit to the number of backticks you
 #		can use as delimters. If you need three consecutive backticks
 #		in your code, use four for delimiters, etc.
 #
 #	*	You can use spaces to get literal backticks at the edges:
-#     
+#
 #         ... type `` `bar` `` ...
-#     
-#     	Turns to:
-#     
+#
+#	Turns to:
+#
 #         ... type <code>`bar`</code> ...
 #
 
@@ -1171,10 +1171,10 @@ sub _DoCodeSpans {
 			\1			# Matching closer
 			(?!`)
 		@
- 			my $c = "$2";
- 			$c =~ s/^[ \t]*//g; # leading whitespace
- 			$c =~ s/[ \t]*$//g; # trailing whitespace
- 			$c = _EncodeCode($c);
+			my $c = "$2";
+			$c =~ s/^[ \t]*//g; # leading whitespace
+			$c =~ s/[ \t]*$//g; # trailing whitespace
+			$c = _EncodeCode($c);
 			"<code>$c</code>";
 		@egsx;
 
@@ -1189,7 +1189,7 @@ sub _EncodeCode {
 # and lose their special Markdown meanings.
 #
     local $_ = shift;
-	
+
 	# Encode all ampersands; HTML entities are not
 	# entities within a Markdown code span.
 	s/&/&amp;/g;
@@ -1198,9 +1198,9 @@ sub _EncodeCode {
 	# (Blosxom interpolates Perl variables in article bodies.)
 	{
 		no warnings 'once';
-    	if (defined($blosxom::version)) {
-    		s/\$/&#036;/g;	
-    	}
+	if (defined($blosxom::version)) {
+		s/\$/&#036;/g;
+	}
     }
 
 
@@ -1225,8 +1225,8 @@ sub _DoItalicsAndBold {
 	my $text = shift;
 
 	# Cave in - `*` and `_` behave differently...  We'll see how it works out
-	
-	
+
+
 	# <strong> must go first:
 	$text =~ s{ (?<!\w) (\*\*|__) (?=\S) (.+?[*_]*) (?<=\S) \1 }
 		{<strong>$2</strong>}gsx;
@@ -1317,12 +1317,12 @@ sub _FormParagraphs {
 	#
 	# Unhashify HTML blocks
 	#
-# 	foreach my $graf (@grafs) {
-# 		my $block = $self->{_html_blocks}{$graf};
-# 		if (defined $block) {
-# 			$graf = $block;
-# 		}
-# 	}
+#	foreach my $graf (@grafs) {
+#		my $block = $self->{_html_blocks}{$graf};
+#		if (defined $block) {
+#			$graf = $block;
+#		}
+#	}
 
 	foreach my $graf (@grafs) {
 		# Modify elements of @grafs in-place...
@@ -1377,10 +1377,10 @@ sub _EncodeAmpsAndAngles {
 
 	# Ampersand-encoding based entirely on Nat Irons's Amputator MT plugin:
 	#   http://bumppo.net/projects/amputator/
- 	$text =~ s/&(?!#?[xX]?(?:[0-9a-fA-F]+|\w+);)/&amp;/g;
+	$text =~ s/&(?!#?[xX]?(?:[0-9a-fA-F]+|\w+);)/&amp;/g;
 
 	# Encode naked <'s
- 	$text =~ s{<(?![a-z/?\$!])}{&lt;}gi;
+	$text =~ s{<(?![a-z/?\$!])}{&lt;}gi;
 
 	return $text;
 }
@@ -1574,18 +1574,18 @@ sub _Detab {
 sub _ParseMetaData {
 	my ($self, $text) = @_;
 	my $clean_text = "";
-	
+
 	my ($inMetaData, $currentKey) = (1,'');
-	
+
 	# If only metadata is "Format: complete" then skip
-	
+
 	if ($text =~ s/^(Format):\s*complete\n(.*?)\n/$2\n/is) {
-		# If "Format: complete" was added automatically, don't force first 
+		# If "Format: complete" was added automatically, don't force first
 		#	line of text to be metadata
 		$self->{_metadata}{$1}= "complete";
 		$self->{document_format} = "complete";
 	}
-	
+
 	foreach my $line ( split /\n/, $text ) {
 		$line =~ /^$/ and $inMetaData = 0;
 		if ($inMetaData) {
@@ -1626,7 +1626,7 @@ sub _ParseMetaData {
 			$clean_text .= "$line\n";
 		}
 	}
-		
+
 	return $clean_text;
 }
 
@@ -1645,16 +1645,16 @@ sub _StripFootnoteDefinitions {
 		my $id = $1;
 		my $footnote = "$2\n";
 		$footnote =~ s/^[ ]{0,$self->{tab_width}}//gm;
-	
+
 		$self->{_footnotes}{id2footnote($id)} = $footnote;
 	}
-	
+
 	return $text;
 }
 
 sub _DoFootnotes {
 	my ($self, $text) = @_;
-	
+
 	# First, run routines that get skipped in footnotes
 	foreach my $label (sort keys %{$self->{_footnotes}}) {
 		my $footnote = $self->_RunBlockGamut($self->{_footnotes}{$label});
@@ -1662,7 +1662,7 @@ sub _DoFootnotes {
 		$footnote = $self->_DoMarkdownCitations($footnote);
 		$self->{_footnotes}{$label} = $footnote;
 	}
-	
+
 	$text =~ s{
 		\[\^(.+?)\]		# id = $1
 	}{
@@ -1679,15 +1679,15 @@ sub _DoFootnotes {
 		}
 		$result;
 	}xsge;
-	
+
 	return $text;
 }
 
 sub _FixFootnoteParagraphs {
 	my ($self, $text) = @_;
-	
+
 	$text =~ s/^\<p\>\<\/footnote\>/<\/footnote>/gm;
-	
+
 	return $text;
 }
 
@@ -1695,7 +1695,7 @@ sub _PrintFootnotes {
 	my $self = shift;
 	my $footnote_counter = 0;
 	my $result = "";
-	
+
 	foreach my $id (@{$self->{_used_footnotes}}) {
 		$footnote_counter++;
 		my $footnote = $self->{_footnotes}{$id};
@@ -1703,7 +1703,7 @@ sub _PrintFootnotes {
 
 		$footnote =~ s/(\<\/(p(re)?|ol|ul)\>)$//;
 		$footnote_closing_tag = $1;
-		
+
 		if ($footnote =~ s/^(<p>)?glossary:\s*//i) {
 			# Add some formatting for glossary entries
 
@@ -1714,12 +1714,12 @@ sub _PrintFootnotes {
 				\n
 			}{
 				my $glossary = "<span class=\"glossary name\">$1</span>";
-				
+
 				if ($2) {
 					$glossary.="<span class=\"glossary sort\" style=\"display:none\">$2</span>";
 				};
-				
-				$glossary . ":<p>";	
+
+				$glossary . ":<p>";
 			}egsx;
 
 			$result.="<li id=\"fn:$id\">$footnote<a href=\"#fnref:$id\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>$footnote_closing_tag</li>\n\n";
@@ -1733,8 +1733,8 @@ sub _PrintFootnotes {
 		$result = "\n\n<div class=\"footnotes\">\n<hr$self->{empty_element_suffix}\n<ol>\n\n".$result;
 	} else {
 		$result = "";
-	}	
-	
+	}
+
 	$result= _UnescapeSpecialChars($result);
 	return $result;
 }
@@ -1766,24 +1766,24 @@ sub xhtmlMetaData {
 	if ($self->{allow_mathml}) {
 		 $result .= qq{<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"\n\t"http://www.w3.org/TR/2001/REC-MathML2-20010221/dtd/xhtml-math11-f.dtd">
 \n};
-	
+
 		$result.= qq{<html xmlns="http://www.w3.org/1999/xhtml">\n\t<head>\n};
 	} else {
 		$result .= qq{<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n};
 
 		$result.= qq!<html xmlns="http://www.w3.org/1999/xhtml">\n\t<head>\n!;
 	}
-	
+
 	$result.= "\t\t<!-- Processed by MultiMarkdown -->\n";
-	
+
 	foreach my $key (sort keys %{$self->{_metadata}}) {
 		# Strip trailing spaces
 		$self->{_metadata}{$key} =~ s/(\s)*$//s;
-		
+
 		# Strip spaces from key
 		my $export_key = $key;
 		$export_key =~ s/\s//g;
-		
+
 		if (lc($key) eq "title") {
 			$result.= "\t\t<title>" . _EncodeAmpsAndAngles($self->{_metadata}{$key}) . "</title>\n";
 		} elsif (lc($key) eq "css") {
@@ -1796,32 +1796,32 @@ sub xhtmlMetaData {
 		}
 	}
 	$result.= "\t</head>\n";
-	
+
 	return $result;
 }
 
 sub textMetaData {
 	my $self = shift;
 	my $result = "";
-	
+
 	foreach my $key (sort keys %{$self->{_metadata}}) {
 		$result .= "$key: $self->{_metadata}{$key}\n";
 	}
 	$result =~ s/\s*\n/<br \/>\n/g;
-	
+
 	if ($result ne "") {
 		$result.= "\n";
 	}
-	
+
 	return $result;
 }
 
 sub _ConvertCopyright{
 	my $text = shift;
 	# Convert to an XML compatible form of copyright symbol
-	
+
 	$text =~ s/&copy;/&#xA9;/gi;
-	
+
 	return $text;
 }
 
@@ -1829,39 +1829,39 @@ sub _ConvertCopyright{
 sub _DoTables {
 	my ($self, $text) = @_;
 	my $less_than_tab = $self->{tab_width} - 1;
-	
+
 	# Algorithm inspired by PHP Markdown Extra's table support
 	# <http://www.michelf.com/projects/php-markdown/>
-		
+
 	# Reusable regexp's to match table
-	
+
 	my $line_start = qr{
 		[ ]{0,$less_than_tab}
 	}mx;
-	
+
 	my $table_row = qr{
 		[^\n]*?\|[^\n]*?\n
 	}mx;
-		
+
 	my $first_row = qr{
 		$line_start
 		\S+.*?\|.*?\n
 	}mx;
-	
+
 	my $table_rows = qr{
 		(\n?$table_row)
 	}mx;
-	
+
 	my $table_caption = qr{
 		$line_start
 		\[.*?\][ \t]*\n
 	}mx;
-	
+
 	my $table_divider = qr{
 		$line_start
-		[\|\-\+\:\.][ \-\+\|\:\.]* \| [ \-\+\|\:\.]* 
+		[\|\-\+\:\.][ \-\+\|\:\.]* \| [ \-\+\|\:\.]*
 	}mx;
-	
+
 	my $whole_table = qr{
 		($table_caption)?		# Optional caption
 		($first_row				# First line must start at beginning
@@ -1870,26 +1870,26 @@ sub _DoTables {
 		$table_rows+			# Body Rows
 		($table_caption)?		# Optional caption
 	}mx;
-	
-	
+
+
 	# Find whole tables, then break them up and process them
-	
+
 	$text =~ s{
 		^($whole_table)			# Whole table in $1
 		(\n|\Z)					# End of file or 2 blank lines
 	}{
 		my $table = $1;
-		
-		# Clean extra spaces at end of lines - 
+
+		# Clean extra spaces at end of lines -
 		#	they cause the processing to choke
 		$table =~ s/[\t ]*\n/\n/gs;
-		
+
 		my $result = "<table>\n";
 		my @alignments;
 		my $use_row_header = 1;
-		
+
 		# Add Caption, if present
-		
+
 		if ($table =~ s/^$line_start(?:\[\s*(.*)\s*\])?(?:\[\s*(.*?)\s*\])[ \t]*$//m) {
 			my $table_id = "";
 			my $table_caption = "";
@@ -1902,28 +1902,28 @@ sub _DoTables {
 				$table_caption = $2;
 			}
 			$result .= "<caption id=\"$table_id\">" . $self->_RunSpanGamut($table_caption). "</caption>\n";
-				
+
 			$self->{_crossrefs}{$table_id} = "#$table_id";
 			$self->{_titles}{$table_id} = "see table";		# captions with "stuff" in them break links
 		}
-				
+
 		# If a second "caption" is present, treat it as a summary
 		# However, this is not valid in XHTML 1.0 Strict
 		# But maybe in future
-		
+
 		# A summary might be longer than one line
 		if ($table =~ s/\n$line_start\[\s*(.*?)\s*\][ \t]*\n/\n/s) {
 			# $result .= "<summary>" . $self->_RunSpanGamut($1) . "</summary>\n";
 		}
-		
+
 		# Now, divide table into header, alignment, and body
 
 		# First, add leading \n in case there is no header
-		
+
 		$table = "\n" . $table;
-		
+
 		# Need to be greedy
-		
+
 		$table =~ s/\n($table_divider)\n(($table_rows)+)//s;
 
 		my $body = "";
@@ -1966,15 +1966,15 @@ sub _DoTables {
 				}
 			}
 		}
-		
+
 		# Process headers
 		$table =~ s/^\n+//s;
-		
+
 		$result .= "<thead>\n";
-		
+
 		# Strip blank lines
 		$table =~ s/\n[ \t]*\n/\n/g;
-		
+
 		foreach my $line (split(/\n/, $table)) {
 			# process each line (row) in table
 			$result .= "<tr>\n";
@@ -1999,9 +1999,9 @@ sub _DoTables {
 			}
 			$result .= "</tr>\n";
 		}
-		
+
 		# Process body
-		
+
 		$result .= "</thead>\n<tbody>\n";
 
 		foreach my $line (split(/\n/, $body)) {
@@ -2046,25 +2046,25 @@ sub _DoTables {
 		# removed, I am open to discussion.
 
 		$result =~ s/<table>\s*<col \/>\s*<tbody>/<table class="pull-quote">\n<col \/>\n<tbody>/s;
-		
+
 		$result .= "</tbody>\n</table>\n";
 		$result
 	}egmx;
-	
+
 	my $table_body = qr{
 		(								# wrap whole match in $2
-			
-			(.*?\|.*?)\n 					# wrap headers in $3
-			
+
+			(.*?\|.*?)\n					# wrap headers in $3
+
 			[ ]{0,$less_than_tab}
-			($table_divider) 	# alignment in $4
-			
+			($table_divider)	# alignment in $4
+
 			(							# wrap cells in $5
 				$table_rows
 			)
 		)
 	}mx;
-	
+
 	return $text;
 }
 
@@ -2072,7 +2072,7 @@ sub _DoTables {
 sub _DoAttributes{
 	my ($self, $id) = @_;
 	my $result = "";
-	
+
 	if (defined $self->{_attributes}{$id}) {
 		my $attributes = $self->{_attributes}{$id};
 		while ($attributes =~ s/(\S+)="(.*?)"//) {
@@ -2082,7 +2082,7 @@ sub _DoAttributes{
 			$result .= " $1=\"$2\"";
 		}
 	}
-	
+
 	return $result;
 }
 
@@ -2103,22 +2103,22 @@ sub _StripMarkdownReferences {
 		my $reference = "$2\n";
 
 		$reference =~ s/^[ ]{0,$self->{tab_width}}//gm;
-		
+
 		$reference = $self->_RunBlockGamut($reference);
 
 		# strip leading and trailing <p> tags (they will be added later)
 		$reference =~ s/^\<p\>//s;
 		$reference =~ s/\<\/p\>\s*$//s;
-		
+
 		$self->{_references}{$id} = $reference;
 	}
-	
+
 	return $text;
 }
 
 sub _DoMarkdownCitations {
 	my ($self, $text) = @_;
-	
+
 	$text =~ s{				# Allow for citations without locator to be written
 		\[\#([^\[]*?)\]		# in usual manner, e.g. [#author][] rather than
 		[ ]?				# [][#author]
@@ -2127,7 +2127,7 @@ sub _DoMarkdownCitations {
 	}{
 		"[][#$1]";
 	}xsge;
-	
+
 	$text =~ s{
 		\[([^\[]*?)\]		# citation text = $1
 		[ ]?			# one optional space
@@ -2147,25 +2147,25 @@ sub _DoMarkdownCitations {
 
 		if (defined $self->{_references}{$id} ) {
 			my $citation_counter=0;
-			
+
 			# See if citation has been used before
 			foreach my $old_id (@{$self->{_used_references}}) {
 				$citation_counter++;
 				$count = $citation_counter if ($old_id eq $id);
 			}
-	
+
 			if (! defined $count) {
 				$self->{_citation_counter}++;
 				$count = $self->{_citation_counter};
 				push (@{$self->{_used_references}},$id);
 			}
-			
+
 			$result = "<span class=\"markdowncitation\">$textual_string (<a href=\"#$id\" title=\"see citation\">$count</a>";
-			
+
 			if ($anchor_text ne "") {
 				$result .=", <span class=\"locator\">$anchor_text</span>";
 			}
-			
+
 			$result .= ")</span>";
 		} else {
 			# No reference exists
@@ -2174,16 +2174,16 @@ sub _DoMarkdownCitations {
 			if ($anchor_text ne "") {
 				$result .=", <span class=\"locator\">$anchor_text</span>";
 			}
-			
+
 			$result .= ")</span>";
 		}
-		
+
 		if (Header2Label($anchor_text) eq "notcited"){
 			$result = "<span class=\"notcited\" id=\"$id\"/>";
 		}
 		$result;
 	}xsge;
-	
+
 	return $text;
 
 }
@@ -2192,7 +2192,7 @@ sub _PrintMarkdownBibliography{
 	my $self = shift;
 	my $citation_counter = 0;
 	my $result;
-	
+
 	foreach my $id (@{$self->{_used_references}}) {
 		$citation_counter++;
 		$result.="<div id=\"$id\"><p>[$citation_counter] <span class=\"item\">$self->{_references}{$id}</span></p></div>\n\n";
@@ -2203,8 +2203,8 @@ sub _PrintMarkdownBibliography{
 		$result = "\n\n<div class=\"bibliography\">\n<hr$self->{empty_element_suffix}\n<p>$self->{bibliography_title}</p>\n\n".$result;
 	} else {
 		$result = "";
-	}	
-	
+	}
+
 	return $result;
 }
 
@@ -2261,9 +2261,9 @@ sub _GenerateImageCrossRefs {
 		    (.*?)		# alt text = $2
 		  \]
 		  \(			# literal paren
-		  	[ \t]*
+			[ \t]*
 			<?(\S+?)>?	# src url = $3
-		  	[ \t]*
+			[ \t]*
 			(			# $4
 			  (['"])	# quote char = $5 '
 			  (.*?)		# title = $6
@@ -2288,40 +2288,40 @@ sub _GenerateImageCrossRefs {
 
 sub _FindMathEquations{
 	my ($self, $text) = @_;
-	
+
 	$text =~ s{
-		(\<math[^\>]*)id=\"(.*?)\"> 	# "
+		(\<math[^\>]*)id=\"(.*?)\">	# "
 	}{
 		my $label = Header2Label($2);
 		my $header = $self->_RunSpanGamut($2);
-		
+
 		$self->{_crossrefs}{$label} = "#$label";
 		$self->{_titles}{$label} = $header;
-		
+
 		$1 . "id=\"$label\">";
 	}xsge;
-	
+
 	return $text;
 }
 
 sub _DoMathSpans {
 	# Based on Gruber's _DoCodeSpans
-	
+
 	my ($self, $text) = @_;
-	my $display_as_block = 0;	
+	my $display_as_block = 0;
 	$display_as_block = 1 if ($text =~ /^<<[^\>\>]*>>$/);
 
 	$text =~ s{
 			(?<!\\)		# Character before opening << can't be a backslash
-			(<<)		# $1 = Opening 
+			(<<)		# $1 = Opening
 			(.+?)		# $2 = The code block
 			(?:\[(.+)\])?	# $3 = optional label
 			(>>)
 		}{
- 			my $m = "$2";
+			my $m = "$2";
 			my $label = "";
 			my @attr = (xmlns=>"http://www.w3.org/1998/Math/MathML");
-			
+
 			if (defined $3) {
 				$label = Header2Label($3);
 				my $header = $self->_RunSpanGamut($3);
@@ -2329,12 +2329,12 @@ sub _DoMathSpans {
 				$self->{_crossrefs}{$label} = "#$label";
 				$self->{_titles}{$label} = $header;
 			}
- 			$m =~ s/^[ \t]*//g; # leading whitespace
- 			$m =~ s/[ \t]*$//g; # trailing whitespace
+			$m =~ s/^[ \t]*//g; # leading whitespace
+			$m =~ s/[ \t]*$//g; # trailing whitespace
 			push(@attr,(id=>"$label")) if ($label ne "");
 			push(@attr,(display=>"block")) if ($display_as_block == 1);
 
-			$m = $mathParser->TextToMathML($m,\@attr); 
+			$m = $mathParser->TextToMathML($m,\@attr);
 			"$m";
 		}egsx;
 
@@ -2343,43 +2343,43 @@ sub _DoMathSpans {
 
 sub _DoDefinitionLists {
 	# Uses the syntax proposed by Michel Fortin in PHP Markdown Extra
-	
+
 	my ($self, $text) = @_;
 	my $less_than_tab = $self->{tab_width} -1;
 
 	return $text unless $text =~ /\n[ ]{0,$less_than_tab}\:[ \t]+/;
-	
+
 	my $line_start = qr{
 		[ ]{0,$less_than_tab}
 	}mx;
-	
+
 	my $term = qr{
 		$line_start
 		[^:\s][^\n]*\n
 	}sx;
-	
+
 	my $definition = qr{
 		\n?[ ]{0,$less_than_tab}
 		\:[ \t]+(.*?)\n
 		((?=\n?\:)|\n|\Z)	# Lookahead for next definition, two returns,
 							# or the end of the document
 	}sx;
-	
+
 	my $definition_block = qr{
 		((?:$term)+)				# $1 = one or more terms
 		((?:$definition)+)			# $2 = by one or more definitions
 	}sx;
-	
+
 	my $definition_list = qr{
 		(?:$definition_block\n*)+		# One ore more definition blocks
 	}sx;
-	
+
 	$text =~ s{
 		($definition_list)			# $1 = the whole list
 	}{
 		my $list = $1;
 		my $result = $1;
-		
+
 		$list =~ s{
 			(?:$definition_block)\n*
 		}{
@@ -2399,7 +2399,7 @@ sub _DoDefinitionLists {
 				}
 				$result;
 			}xmge;
-			
+
 			$defs =~ s{
 				$definition
 			}{
@@ -2407,13 +2407,13 @@ sub _DoDefinitionLists {
 				$def =~ s/^[ ]{0,$self->{tab_width}}//gm;
 				"<dd>\n" . $self->_RunBlockGamut($def) . "\n</dd>\n";
 			}xsge;
-			
+
 			$terms . $defs . "\n";
 		}xsge;
-		
+
 		"<dl>\n" . $list . "</dl>\n\n";
 	}xsge;
-	
+
 	return $text
 }
 
