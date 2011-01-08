@@ -464,10 +464,10 @@ sub _RunBlockGamut {
 	$text =~ s{^[ ]{0,2}([ ]? -[ ]?){3,}[ \t]*$}{\n<hr$g_settings{empty_element_suffix}\n}gmx;
 	$text =~ s{^[ ]{0,2}([ ]? _[ ]?){3,}[ \t]*$}{\n<hr$g_settings{empty_element_suffix}\n}gmx;
 
+	$text = _DoBlockQuotes($text);
 	$text = _DoDefinitionLists($text);
 	$text = _DoLists($text);
 	$text = _DoCodeBlocks($text);
-	$text = _DoBlockQuotes($text);
 
 	# We already ran _HashHTMLBlocks() before, in Markdown(), but that
 	# was to escape raw HTML in the original Markdown source. This time,
