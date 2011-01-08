@@ -294,45 +294,45 @@ sub _StripHTML {
 	return $text;
 }
 
+# Hashify HTML blocks:
+# We only want to do this for block-level HTML tags, such as headers,
+# lists, and tables. That's because we still want to wrap <p>s around
+# "paragraphs" that are wrapped in non-block-level tags, such as anchors,
+# phrase emphasis, and spans. The list of tags we're looking for is
+# hard-coded:
+my $block_tags = qr{
+	  (?:
+		p         |  div     |  h[1-6]  |  blockquote  |  pre       |  table  |
+		dl        |  ol      |  ul      |  script      |  noscript  |  form   |
+		fieldset  |  iframe     |  ins         |  del
+	  )
+	}x;			# MultiMarkdown does not include `math` in the above list so that 
+				# Equations can optionally be included in separate paragraphs
+
+my $tag_attrs = qr{
+					(?:				# Match one attr name/value pair
+						\s+				# There needs to be at least some whitespace
+										# before each attribute name.
+						[\w.:_-]+		# Attribute name
+						\s*=\s*
+						(?:
+							".+?"		# "Attribute value"
+						 |
+							'.+?'		# 'Attribute value'
+						)
+					)*				# Zero or more
+				}x;
+
+my $empty_tag = qr{< \w+ $tag_attrs \s* />}xms;
+my $open_tag =  qr{< $block_tags $tag_attrs \s* >}xms;
+my $close_tag = undef;	# let Text::Balanced handle this
+
+use Text::Balanced qw(gen_extract_tagged);
+my $extract_block = gen_extract_tagged($open_tag, $close_tag, undef, { ignore => [$empty_tag] });
+
 sub _HashHTMLBlocks {
 	my $text = shift;
 	my $less_than_tab = $g_settings{tab_width} - 1;
-
-	# Hashify HTML blocks:
-	# We only want to do this for block-level HTML tags, such as headers,
-	# lists, and tables. That's because we still want to wrap <p>s around
-	# "paragraphs" that are wrapped in non-block-level tags, such as anchors,
-	# phrase emphasis, and spans. The list of tags we're looking for is
-	# hard-coded:
-	my $block_tags = qr{
-		  (?:
-			p         |  div     |  h[1-6]  |  blockquote  |  pre       |  table  |
-			dl        |  ol      |  ul      |  script      |  noscript  |  form   |
-			fieldset  |  iframe     |  ins         |  del
-		  )
-		}x;			# MultiMarkdown does not include `math` in the above list so that 
-					# Equations can optionally be included in separate paragraphs
-
-	my $tag_attrs = qr{
-						(?:				# Match one attr name/value pair
-							\s+				# There needs to be at least some whitespace
-											# before each attribute name.
-							[\w.:_-]+		# Attribute name
-							\s*=\s*
-							(?:
-								".+?"		# "Attribute value"
-							 |
-								'.+?'		# 'Attribute value'
-							)
-						)*				# Zero or more
-					}x;
-
-	my $empty_tag = qr{< \w+ $tag_attrs \s* />}xms;
-	my $open_tag =  qr{< $block_tags $tag_attrs \s* >}xms;
-	my $close_tag = undef;	# let Text::Balanced handle this
-
-	use Text::Balanced qw(gen_extract_tagged);
-	my $extract_block = gen_extract_tagged($open_tag, $close_tag, undef, { ignore => [$empty_tag] });
 
 	my @chunks;
 	## TO-DO: the 0,3 on the next line ought to respect the
