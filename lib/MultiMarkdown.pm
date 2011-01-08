@@ -334,36 +334,38 @@ sub _HashHTMLBlocks {
 	my $text = shift;
 	my $less_than_tab = $g_settings{tab_width} - 1;
 
-	my @chunks;
-	## TO-DO: the 0,3 on the next line ought to respect the
-	## tabwidth, or else, we should mandate 4-space tabwidth and
-	## be done with it:
-	while ($text =~ s{^(([ ]{0,3}<)?.*\n)}{}m) {
-		my $cur_line = $1;
-		if (defined $2) {
-			# current line could be start of code block
+	if ($text =~ /<$block_tags/) {
+		my @chunks;
+		## TO-DO: the 0,3 on the next line ought to respect the
+		## tabwidth, or else, we should mandate 4-space tabwidth and
+		## be done with it:
+		while ($text =~ s{^(([ ]{0,3}<)?.*\n)}{}m) {
+			my $cur_line = $1;
+			if (defined $2) {
+				# current line could be start of code block
 
-			my ($tag, $remainder) = $extract_block->($cur_line . $text);
-			if ($tag) {
-				my $key = md5_hex($tag);
-				$g_html_blocks{$key} = $tag;
-				push @chunks, "\n\n" . $key . "\n\n";
-				$text = $remainder;
+				my ($tag, $remainder) = $extract_block->($cur_line . $text);
+				if ($tag) {
+					my $key = md5_hex($tag);
+					$g_html_blocks{$key} = $tag;
+					push @chunks, "\n\n" . $key . "\n\n";
+					$text = $remainder;
+				}
+				else {
+					# No tag match, so toss $cur_line into @chunks
+					push @chunks, $cur_line;
+				}
 			}
 			else {
-				# No tag match, so toss $cur_line into @chunks
+				# current line could NOT be start of code block
 				push @chunks, $cur_line;
 			}
-		}
-		else {
-			# current line could NOT be start of code block
-			push @chunks, $cur_line;
-		}
 
+		}
+		push @chunks, $text; # Whatever is left.
+
+		$text = join '', @chunks;
 	}
-	push @chunks, $text; # Whatever is left.
-
-	$text = join '', @chunks;
 
 
 
