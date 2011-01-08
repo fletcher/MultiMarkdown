@@ -1,5 +1,3 @@
-#!/usr/bin/env perl
-
 # MultiMarkdown -- A modification of John Gruber's original Markdown
 #	that adds new features and an output format that can more readily
 #	be converted into other document formats
@@ -33,6 +31,11 @@ use warnings;
 
 use File::Basename;
 use File::Spec;
+use Digest::MD5 qw(md5_hex);
+use base        'Exporter';
+
+our $VERSION = '2.0.b6';
+our @EXPORT_OK = qw{Markdown};
 
 eval {require MT};  # Test to see if we're running in MT.
 unless ($@) {
@@ -44,34 +47,11 @@ unless ($@) {
 	require File::Spec->join($path, "ASCIIMathML.pm");
 }
 
-use Digest::MD5 qw(md5_hex);
-
-require Exporter;
-our @ISA = qw{Exporter};
-our @EXPORT = qw{Markdown};
-our $VERSION = '2.0.b6';
-
 our $mathParser = new Text::ASCIIMathML();
 
 ## Disabled; causes problems under Perl 5.6.1:
 # use utf8;
 # binmode( STDOUT, ":utf8" );  # c.f.: http://acis.openlib.org/dev/perl-unicode-struggle.html
-
-#
-# Global default settings:
-#
-our %g_settings = () ;
-
-sub reset_defaults {
-	$g_settings{empty_element_suffix} = " />";     # Change to ">" for HTML output
-	$g_settings{tab_width} = 4;
-	$g_settings{allow_mathml} = 1;
-	$g_settings{base_header_level} = 1;
-	$g_settings{use_metadata} = 1;
-	$g_settings{bibliography_title} = "Bibliography";
-	$g_settings{document_format} = "";
-	$g_settings{base_url} = "";
-}
 
 #
 # Globals:
@@ -108,6 +88,21 @@ foreach my $char (split //, '\\`*_{}[]()>#+-.!') {
 	$g_escape_table{$char} = md5_hex($char);
 }
 
+#
+# Global default settings:
+#
+our %g_settings = () ;
+
+sub reset_defaults {
+	$g_settings{empty_element_suffix} = " />";     # Change to ">" for HTML output
+	$g_settings{tab_width} = 4;
+	$g_settings{allow_mathml} = 1;
+	$g_settings{base_header_level} = 1;
+	$g_settings{use_metadata} = 1;
+	$g_settings{bibliography_title} = "Bibliography";
+	$g_settings{document_format} = "";
+	$g_settings{base_url} = "";
+}
 
 # Global hashes, used by various utility routines
 our %g_urls = ();
