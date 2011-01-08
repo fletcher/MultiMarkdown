@@ -20,7 +20,7 @@ if ($@) {
 	require MultiMarkdown;
 }
 
-import MultiMarkdown qw{Markdown};
+import MultiMarkdown qw{markdown};
 
 #### Blosxom plug-in interface ##########################################
 
@@ -37,7 +37,7 @@ sub story {
 	if ( (! $g_blosxom_use_meta) or
 	     (defined($meta::markup) and ($meta::markup =~ /^\s*markdown\s*$/i))
 	     ){
-			$$body_ref  = Markdown($$body_ref);
+			$$body_ref  = markdown($$body_ref);
      }
      1;
 }
@@ -101,7 +101,7 @@ unless ($@) {
 					$opts{empty_element_suffix} = " />";
 				}
 			}
-			$text = $raw ? $text : Markdown($text, %opts);
+			$text = $raw ? $text : markdown($text, %opts);
 			$text;
 		},
 	});
@@ -131,7 +131,7 @@ unless ($@) {
 						$opts{empty_element_suffix} = " />";
 					}
 				}
-				$text = Markdown($text, %opts);
+				$text = markdown($text, %opts);
 				$text = $smartypants->($text, '1');
 			},
 		});
@@ -180,7 +180,7 @@ else {
 			local $/;               # Slurp the whole file
 			$text = <>;
 		}
-        print Markdown($text, %opts);
+        print markdown($text, \%opts);
     }
 }
 
