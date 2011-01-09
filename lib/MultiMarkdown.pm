@@ -1471,7 +1471,7 @@ sub _DoBlockQuotes {
 			$bq =~ s/^[ \t]+$//mg;			# trim whitespace-only lines
 			$bq = $self->_RunBlockGamut($bq);		# recurse
 
-			$bq =~ s/^/  /g;
+			$bq =~ s/^/  /mg;
 			# These leading spaces screw with <pre> content, so we need to fix that:
 			$bq =~ s{
 					(\s*<pre>.+?</pre>)
