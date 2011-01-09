@@ -100,9 +100,197 @@ our %g_default_settings = (
 	bibliography_title => "Bibliography",
 	document_format => "",
 	empty_element_suffix => " />",
+	heading_ids => 1,
+	img_ids => 1,
 	tab_width => 4,
 	use_metadata => 1,
+	# WikiWords and [[Wiki Links]] are not supported anymore
+	use_wikilinks => 0,
 );
+
+=head1 NAME
+
+MultiMarkdown - Convert MultiMarkdown syntax to (X)HTML
+
+=head1 SYNOPSIS
+
+    use MultiMarkdown 'markdown';
+    my $html = markdown($text);
+
+    use MultiMarkdown 'markdown';
+    my $html = markdown( $text, {
+        empty_element_suffix => '>',
+        tab_width => 2,
+        use_wikilinks => 1,
+    } );
+
+    use MultiMarkdown;
+    my $m = MultiMarkdown->new;
+    my $html = $m->markdown($text);
+
+    use MultiMarkdown;
+    my $m = MultiMarkdown->new(
+        empty_element_suffix => '>',
+        tab_width => 2,
+        use_wikilinks => 1,
+    );
+    my $html = $m->markdown( $text );
+
+=head1 DESCRIPTION
+
+Markdown is a text-to-HTML filter; it translates an easy-to-read /
+easy-to-write structured text format into HTML. Markdown's text format
+is most similar to that of plain text email, and supports features such
+as headers, *emphasis*, code blocks, blockquotes, and links.
+
+Markdown's syntax is designed not as a generic markup language, but
+specifically to serve as a front-end to (X)HTML. You can use span-level
+HTML tags anywhere in a Markdown document, and you can use block level
+HTML tags (C<< <div> >>, C<< <table> >> etc.). Note that by default
+Markdown isn't interpreted in HTML block-level elements, unless you add
+a C<markdown=1"> attribute to the element. See L<Text::Markdown> for
+details.
+
+This module implements the MultiMarkdown markdown syntax extensions from:
+
+    http://fletcherpenney.net/multimarkdown/
+
+=head1 SYNTAX
+
+For more information about (original) Markdown's syntax, see:
+
+    http://daringfireball.net/projects/markdown/
+
+This module implements MultiMarkdown, which is an extension to Markdown..
+
+The extension is documented at:
+
+    http://fletcherpenney.net/multimarkdown/
+
+and borrows from php-markdown, which lives at:
+
+    http://michelf.com/projects/php-markdown/extra/
+
+This documentation is going to be moved/copied into this module for clearer reading in a future release..
+
+=head1 OPTIONS
+
+MultiMarkdown supports a number of options to it's processor which control the behaviour of the output document.
+
+These options can be supplied to the constructor, on in a hash with the individual calls to the markdown method.
+See the synopsis for examples of both of the above styles.
+
+The options for the processor are:
+
+=over
+
+=item use_metadata
+
+Controls the metadata options below.
+
+=item strip_metadata
+
+If true, any metadata in the input document is removed from the output document (note - does not take effect in complete document format).
+
+=item empty element suffix
+
+This option can be used to generate normal HTML output. By default, it is ' />', which is xHTML, change to '>' for normal HTML.
+
+=item img_ids
+
+Controls if <img> tags generated have an id attribute. Defaults to true.
+Turn off for compatibility with the original markdown.
+
+=item heading_ids
+
+Controls if <hX> tags generated have an id attribute. Defaults to true.
+Turn off for compatibility with the original markdown.
+
+=item bibliography_title
+
+The title of the generated bibliography, defaults to 'Bibliography'.
+
+=item tab_width
+
+Controls indent width in the generated markup, defaults to 4
+
+=item disable_tables
+
+If true, this disables the MultiMarkdown table handling.
+
+=item disable_footnotes
+
+If true, this disables the MultiMarkdown footnotes handling.
+
+=item disable_bibliography
+
+If true, this disables the MultiMarkdown bibliography/citation handling.
+
+=back
+
+A number of possible items of metadata can also be supplied as options.
+Note that if the use_metadata is true then the metadata in the document will overwrite the settings on command line.
+
+Metadata options supported are:
+
+=over
+
+=item document_format
+
+=item use_wikilinks
+
+=item base_url
+
+=back
+
+=head1 METADATA
+
+MultiMarkdown supports the concept of 'metadata', which allows you to specify a number of formatting options
+within the document itself. Metadata should be placed in the top few lines of a file, on value per line as colon separated key/value pairs.
+The metadata should be separated from the document with a blank line.
+
+Most metadata keys are also supported as options to the constructor, or options
+to the markdown method itself. (Note, as metadata, keys contain space, whereas options the keys are underscore separated.)
+
+You can attach arbitrary metadata to a document, which is output in HTML <META> tags if unknown, see t/11document_format.t for more info.
+
+A list of 'known' metadata keys, and their effects are listed below:
+
+=over
+
+=item document format
+
+If set to 'complete', MultiMarkdown will render an entire xHTML page, otherwise it will render a document fragment
+
+=over
+
+=item css
+
+Sets a CSS file for the file, if in 'complete' document format.
+
+=item title
+
+Sets the page title, if in 'complete' document format.
+
+=back
+
+=item use wikilinks
+
+If set to '1' or 'on', causes links that are WikiWords to automatically be processed into links.
+
+=item base url
+
+This is the base URL for referencing wiki pages. In this is not supplied, all wiki links are relative.
+
+=back
+
+=head1 METHODS
+
+=head2 new
+
+A simple constructor, see the SYNTAX and OPTIONS sections for more information.
+
+=cut
 
 sub new {
 	my ($class, %params) = @_;
@@ -112,10 +300,21 @@ sub new {
 		$p{$_} = $params{$_};
 	}
 
+	if ($p{use_wikilinks}) {
+		croak('Sorry, WikiLinks are not supported in this version of ' . __PACKAGE__);
+	}
+
 	my $self = { params => \%p };
 	bless $self, ref($class) || $class;
 	return $self;
 }
+
+=head2 markdown
+
+The main function as far as the outside world is concerned. See the SYNOPSIS
+for details on use.
+
+=cut
 
 sub markdown {
 	my ( $self, $text, $options ) = @_;
@@ -141,14 +340,12 @@ sub markdown {
 	return $self->_Markdown($text);
 }
 
-# Global hashes, used by various utility routines
-# Clear the global hashes. If we don't clear these, you get conflicts
-# from other articles when generating a page which contains more than
-# one article (e.g. an index page that shows the N most recent
-# articles):
-sub _CleanUpRunData($$) {
+sub _CleanUpRunData {
 	my ($self, $options) = @_;
-
+	# Clear the global hashes. If we don't clear these, you get conflicts
+	# from other articles when generating a page which contains more than
+	# one article (e.g. an index page that shows the N most recent
+	# articles):
 	$self->{_urls} = {};
 	$self->{_titles} = {};
 	$self->{_html_blocks} = {};
@@ -185,7 +382,7 @@ sub _Markdown {
 	$text = $self->_CleanUpDoc($text);
 
 	# Strip out MetaData
-	$text = $self->_ParseMetaData($text) if $self->{use_metadata};
+	$text = $self->_ParseMetaData($text) if ($self->{use_metadata} || $self->{strip_metadata});
 
 	# And recheck for leading blank lines
 	$text =~ s/^\n+//s;
@@ -194,7 +391,7 @@ sub _Markdown {
 	$text = $self->_HashHTMLBlocks($text);
 
 	# Strip footnote and link definitions, store in hashes.
-	$text = $self->_StripFootnoteDefinitions($text);
+	$text = $self->_StripFootnoteDefinitions($text) unless $self->{disable_footnotes};
 
 	$text = $self->_StripLinkDefinitions($text);
 
@@ -204,28 +401,26 @@ sub _Markdown {
 
 	$text = $self->_RunBlockGamut($text);
 
-	$text = $self->_DoMarkdownCitations($text);
-
-	$text = $self->_DoFootnotes($text);
+	$text = $self->_DoMarkdownCitations($text) unless $self->{disable_bibliography};
+	$text = $self->_DoFootnotes($text) unless $self->{disable_footnotes};
 
 	$text = _UnescapeSpecialChars($text);
 
 	# Clean encoding within HTML comments
 	$text = $self->_UnescapeComments($text);
 
-	$text = $self->_FixFootnoteParagraphs($text);
-	$text .= $self->_PrintFootnotes();
-
-	$text .= $self->_PrintMarkdownBibliography();
+	$text = $self->_FixFootnoteParagraphs($text) unless $self->{disable_footnotes};
+	$text .= $self->_PrintFootnotes() unless $self->{disable_footnotes};
+	$text .= $self->_PrintMarkdownBibliography() unless $self->{disable_bibliography};
 
 	$text = _ConvertCopyright($text);
 
 	if (lc($self->{document_format}) =~ /^complete\s*$/i) {
-		return $self->xhtmlMetaData() . "<body>\n\n" . $text . "\n</body>\n</html>";
+		return $self->_xhtmlMetaData() . "<body>\n\n" . $text . "\n</body>\n</html>";
 	} elsif (lc($self->{document_format}) =~ /^snippet\s*$/i) {
 		return $text . "\n";
 	} else {
-		return $self->{document_format} . $self->textMetaData() . $text . "\n";
+		return $self->{document_format} . $self->_textMetaData() . $text . "\n";
 	}
 
 }
@@ -478,7 +673,8 @@ sub _RunBlockGamut {
 
 	# Do tables first to populate the table id's for cross-refs
 	# Escape <pre><code> so we don't get greedy with tables
-	$text = $self->_DoTables($text);
+
+	$text = $self->_DoTables($text) unless $self->{disable_tables};
 
 	# And now, protect our tables
 	$text = $self->_HashHTMLBlocks($text);
@@ -593,7 +789,7 @@ sub _DoAnchors {
 		}
 
 		# Allow automatic cross-references to headers
-		my $label = Header2Label($link_id);
+		my $label = _Header2Label($link_id);
 		if (defined $self->{_urls}{$link_id}) {
 			my $url = $self->{_urls}{$link_id};
 			$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
@@ -687,7 +883,7 @@ sub _DoAnchors {
 		(my $link_id = lc $2) =~ s{[ ]?\n}{ }g; # lower-case and turn embedded newlines into spaces
 
 		# Allow automatic cross-references to headers
-		my $label = Header2Label($link_id);
+		my $label = _Header2Label($link_id);
 		if (defined $self->{_urls}{$link_id}) {
 			my $url = $self->{_urls}{$link_id};
 			$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
@@ -758,18 +954,23 @@ sub _DoImages {
 		}
 
 		$alt_text =~ s/"/&quot;/g;
+
 		if (defined $self->{_urls}{$link_id}) {
 			my $url = $self->{_urls}{$link_id};
 			$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
 			$url =~ s!  _ !$g_escape_table{'_'}!gx;		# conflicting with italics/bold.
 
-			my $label = Header2Label($alt_text);
-			$self->{_crossrefs}{$label} = "#$label";
-			if (! defined $self->{_titles}{$link_id}) {
-				$self->{_titles}{$link_id} = $alt_text;
+			my $idString = "";
+			if ($self->{img_ids}) {
+				my $label = _Header2Label($alt_text);
+				$self->{_crossrefs}{$label} = "#$label";
+				if (! defined $self->{_titles}{$link_id}) {
+					$self->{_titles}{$link_id} = $alt_text;
+				}
+				$idString = " id=\"$label\"";
 			}
 
-			$result = "<img id=\"$label\" src=\"$url\" alt=\"$alt_text\"";
+			$result = "<img$idString src=\"$url\" alt=\"$alt_text\"";
 			if (defined $self->{_titles}{$link_id}) {
 				my $title = $self->{_titles}{$link_id};
 				$title =~ s! \* !$g_escape_table{'*'}!gx;
@@ -818,15 +1019,20 @@ sub _DoImages {
 
 		$alt_text =~ s/"/&quot;/g;
 		$title    =~ s/"/&quot;/g;
+
 		$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
 		$url =~ s!  _ !$g_escape_table{'_'}!gx;		# conflicting with italics/bold.
 		$url =~ s{^<(.*)>$}{$1};					# Remove <>'s surrounding URL, if present
 
-		my $label = Header2Label($alt_text);
-		$self->{_crossrefs}{$label} = "#$label";
-#		$self->{_titles}{$label} = $alt_text;			# I think this line should not be here
+		my $idString = "";
+		if ($self->{img_ids}) {
+			my $label = _Header2Label($alt_text);
+			$self->{_crossrefs}{$label} = "#$label";
+#			$self->{_titles}{$label} = $alt_text;			# I think this line should not be here
+			$idString = " id=\"$label\"";
+		}
 
-		$result = "<img id=\"$label\" src=\"$url\" alt=\"$alt_text\"";
+		$result = "<img$idString src=\"$url\" alt=\"$alt_text\"";
 		if (defined $title) {
 			$title =~ s! \* !$g_escape_table{'*'}!gx;
 			$title =~ s!  _ !$g_escape_table{'_'}!gx;
@@ -856,14 +1062,14 @@ sub _DoHeaders {
 	#
 	$text =~ s{ ^(.+?)(?:\s*(?<!\\)\[([^\[]*?)\])?[ \t]*\n=+[ \t]*\n+ }{
 		if (defined $2) {
-			$label = Header2Label($2);
+			$label = _Header2Label($2);
 		} else {
-			$label = Header2Label($1);
+			$label = _Header2Label($1);
 		}
 		$header = $self->_RunSpanGamut($1);
 		$header =~ s/^\s*//s;
 
-		if ($label ne "") {
+		if ($self->{heading_ids} && $label ne "") {
 			$self->{_crossrefs}{$label} = "#$label";
 			$self->{_titles}{$label} = _StripHTML($header);
 			$idString = " id=\"$label\"";
@@ -877,14 +1083,14 @@ sub _DoHeaders {
 
 	$text =~ s{ ^(.+?)(?:\s*(?<!\\)\[([^\[]*?)\])?[ \t]*\n-+[ \t]*\n+ }{
 		if (defined $2) {
-			$label = Header2Label($2);
+			$label = _Header2Label($2);
 		} else {
-			$label = Header2Label($1);
+			$label = _Header2Label($1);
 		}
 		$header = $self->_RunSpanGamut($1);
 		$header =~ s/^\s*//s;
 
-		if ($label ne "") {
+		if ($self->{heading_ids} && $label ne "") {
 			$self->{_crossrefs}{$label} = "#$label";
 			$self->{_titles}{$label} = _StripHTML($header);
 			$idString = " id=\"$label\"";
@@ -917,14 +1123,14 @@ sub _DoHeaders {
 		}{
 			my $h_level = length($1) + $self->{base_header_level} - 1;
 			if (defined $3) {
-				$label = Header2Label($3);
+				$label = _Header2Label($3);
 			} else {
-				$label = Header2Label($2);
+				$label = _Header2Label($2);
 			}
 			$header = $self->_RunSpanGamut($2);
 			$header =~ s/^\s*//s;
 
-			if ($label ne "") {
+			if ($self->{heading_ids} && $label ne "") {
 				$self->{_crossrefs}{$label} = "#$label";
 				$self->{_titles}{$label} = _StripHTML($header);
 				$idString = " id=\"$label\"";
@@ -1646,7 +1852,7 @@ sub _StripFootnoteDefinitions {
 		my $footnote = "$2\n";
 		$footnote =~ s/^[ ]{0,$self->{tab_width}}//gm;
 
-		$self->{_footnotes}{id2footnote($id)} = $footnote;
+		$self->{_footnotes}{_Id2Footnote($id)} = $footnote;
 	}
 
 	return $text;
@@ -1667,7 +1873,7 @@ sub _DoFootnotes {
 		\[\^(.+?)\]		# id = $1
 	}{
 		my $result = "";
-		my $id = id2footnote($1);
+		my $id = _Id2Footnote($1);
 		if (defined $self->{_footnotes}{$id} ) {
 			$self->{_footnote_counter}++;
 			if ($self->{_footnotes}{$id} =~ /^(<p>)?glossary:/i) {
@@ -1739,7 +1945,7 @@ sub _PrintFootnotes {
 	return $result;
 }
 
-sub Header2Label {
+sub _Header2Label {
 	my $header = shift;
 	my $label = lc $header;
 	$label =~ s/[^A-Za-z0-9:_.-]//g;		# Strip illegal characters
@@ -1748,7 +1954,7 @@ sub Header2Label {
 	return $label;
 }
 
-sub id2footnote {
+sub _Id2Footnote {
 	# Since we prepend "fn:", we can allow leading digits in footnotes
 	my $id = shift;
 	my $footnote = lc $id;
@@ -1757,7 +1963,7 @@ sub id2footnote {
 }
 
 
-sub xhtmlMetaData {
+sub _xhtmlMetaData {
 	my $self = shift;
 	my $result = qq{<?xml version="1.0" encoding="UTF-8" ?>\n};
 
@@ -1800,14 +2006,16 @@ sub xhtmlMetaData {
 	return $result;
 }
 
-sub textMetaData {
+sub _textMetaData {
 	my $self = shift;
 	my $result = "";
+
+	return $result if $self->{strip_metadata};
 
 	foreach my $key (sort keys %{$self->{_metadata}}) {
 		$result .= "$key: $self->{_metadata}{$key}\n";
 	}
-	$result =~ s/\s*\n/<br \/>\n/g;
+	$result =~ s/\s*\n/<br$self->{empty_element_suffix}\n/g;
 
 	if ($result ne "") {
 		$result.= "\n";
@@ -1894,7 +2102,7 @@ sub _DoTables {
 			my $table_id = "";
 			my $table_caption = "";
 
-			$table_id = Header2Label($2);
+			$table_id = _Header2Label($2);
 
 			if (defined $1) {
 				$table_caption = $1;
@@ -2178,7 +2386,7 @@ sub _DoMarkdownCitations {
 			$result .= ")</span>";
 		}
 
-		if (Header2Label($anchor_text) eq "notcited"){
+		if (_Header2Label($anchor_text) eq "notcited"){
 			$result = "<span class=\"notcited\" id=\"$id\"/>";
 		}
 		$result;
@@ -2240,7 +2448,7 @@ sub _GenerateImageCrossRefs {
 
 		$alt_text =~ s/"/&quot;/g;
 		if (defined $self->{_urls}{$link_id}) {
-			my $label = Header2Label($alt_text);
+			my $label = _Header2Label($alt_text);
 			$self->{_crossrefs}{$label} = "#$label";
 		}
 		else {
@@ -2278,7 +2486,7 @@ sub _GenerateImageCrossRefs {
 		my $alt_text    = $2;
 
 		$alt_text =~ s/"/&quot;/g;
-		my $label = Header2Label($alt_text);
+		my $label = _Header2Label($alt_text);
 		$self->{_crossrefs}{$label} = "#$label";
 		$whole_match;
 	}xsge;
@@ -2292,7 +2500,7 @@ sub _FindMathEquations{
 	$text =~ s{
 		(\<math[^\>]*)id=\"(.*?)\">	# "
 	}{
-		my $label = Header2Label($2);
+		my $label = _Header2Label($2);
 		my $header = $self->_RunSpanGamut($2);
 
 		$self->{_crossrefs}{$label} = "#$label";
@@ -2323,7 +2531,7 @@ sub _DoMathSpans {
 			my @attr = (xmlns=>"http://www.w3.org/1998/Math/MathML");
 
 			if (defined $3) {
-				$label = Header2Label($3);
+				$label = _Header2Label($3);
 				my $header = $self->_RunSpanGamut($3);
 
 				$self->{_crossrefs}{$label} = "#$label";
