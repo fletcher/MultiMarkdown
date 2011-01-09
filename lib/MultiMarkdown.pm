@@ -1218,7 +1218,7 @@ sub _DoLists {
 				# paragraph for the last item in a list, if necessary:
 				$list =~ s/\n{2,}/\n\n\n/g;
 				my $result = $self->_ProcessListItems($list, $marker_any);
-				$result = "<$list_type>\n" . $result . "</$list_type>\n";
+				$result = "<$list_type>\n" . $result . "</$list_type>\n\n";
 				$result;
 			}egmx;
 	}
