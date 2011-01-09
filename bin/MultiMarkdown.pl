@@ -148,7 +148,18 @@ else {
 
 		my %opts = ();
 
-		if (basename($0) eq 'Markdown.pl') {
+		#### Check for command-line switches: #################
+		my %cli_opts;
+		use Getopt::Long;
+		Getopt::Long::Configure('pass_through');
+		GetOptions(\%cli_opts,
+			'version',
+			'shortversion',
+			'html4tags',
+			'markdownonly',
+		);
+
+		if ($cli_opts{'markdownonly'} || basename($0) eq 'Markdown.pl') {
 			%opts = (
 				allow_mathml => 0,
 				use_metadata => 0,
@@ -161,15 +172,6 @@ else {
 			);
 		}
 
-		#### Check for command-line switches: #################
-		my %cli_opts;
-		use Getopt::Long;
-		Getopt::Long::Configure('pass_through');
-		GetOptions(\%cli_opts,
-			'version',
-			'shortversion',
-			'html4tags',
-		);
 		if ($cli_opts{'version'}) {		# Version info
 			print "\nThis is MultiMarkdown, version $MultiMarkdown::VERSION.\n";
 			print "Original code Copyright 2004 John Gruber\n";
@@ -185,7 +187,6 @@ else {
 		if ($cli_opts{'html4tags'}) {			# Use HTML tag style instead of XHTML
 			$opts{empty_element_suffix} = ">";
 		}
-
 
 		#### Process incoming text: ###########################
 		my $text;
