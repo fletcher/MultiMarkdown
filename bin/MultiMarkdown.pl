@@ -148,6 +148,15 @@ else {
 
 		my %opts = ();
 
+		if (basename($0) eq 'Markdown.pl') {
+			%opts = (
+				allow_mathml => 0,
+				use_metadata => 0,
+				heading_ids => 0,
+				img_ids => 0,
+			);
+		}
+
 		#### Check for command-line switches: #################
 		my %cli_opts;
 		use Getopt::Long;
