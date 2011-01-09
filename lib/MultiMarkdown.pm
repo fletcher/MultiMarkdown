@@ -1203,12 +1203,7 @@ sub _DoLists {
 				$list =~ s/\n{2,}/\n\n\n/g;
 				my $result = $self->_ProcessListItems($list, $marker_any);
 
-				# Trim any trailing whitespace, to put the closing `</$list_type>`
-				# up on the preceding line, to get it past the current stupid
-				# HTML block parser. This is a hack to work around the terrible
-				# hack that is the HTML block parser.
-				$result =~ s{\s+$}{};
-				$result = "<$list_type>" . $result . "</$list_type>\n";
+				$result = "<$list_type>\n" . $result . "</$list_type>\n";
 				$result;
 			}egmx;
 	}
