@@ -154,6 +154,7 @@ else {
 				use_metadata => 0,
 				heading_ids => 0,
 				img_ids => 0,
+				codeblocks_newline => "\n",
 			);
 		}
 

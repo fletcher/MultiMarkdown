@@ -98,6 +98,7 @@ our %g_default_settings = (
 	use_metadata => 1,
 	# WikiWords and [[Wiki Links]] are not supported anymore
 	use_wikilinks => 0,
+	codeblocks_newline => '',
 );
 
 =head1 NAME
@@ -1324,7 +1325,7 @@ sub _DoCodeBlocks {
 			$codeblock =~ s/\A\n+//; # trim leading newlines
 			$codeblock =~ s/\n+\z//; # trim trailing newlines
 
-			$result = "\n\n<pre><code>" . $codeblock . "</code></pre>\n\n";	# CHANGED: Removed newline for MMD
+			$result = "\n\n<pre><code>" . $codeblock . "$self->{codeblocks_newline}</code></pre>\n\n";
 
 			$result;
 		}egmx;
