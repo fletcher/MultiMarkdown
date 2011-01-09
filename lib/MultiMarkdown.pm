@@ -99,6 +99,7 @@ our %g_default_settings = (
 	# WikiWords and [[Wiki Links]] are not supported anymore
 	use_wikilinks => 0,
 	codeblocks_newline => '',
+	running_blockquotes => 1,
 );
 
 =head1 NAME
@@ -295,6 +296,33 @@ sub new {
 
 	if ($p{use_wikilinks}) {
 		croak('Sorry, WikiLinks are not supported in this version of ' . __PACKAGE__);
+	}
+
+	# The original Markdown implementation supports "running blockquotes": if
+	# any line in a paragraph start with the '>' character, that line and all
+	# the subsequent ones are split from the paragraph and become a
+	# blockquote. This is inconsistent with the list behavior (list don't
+	# start mid-paragraph).
+	#
+	# Additionally, if a blockquote happens within a non-block list item (e.g.
+	# a standalone item or an item in a sequence of items not separated by
+	# empty lines), mismatched markup is generated, with interleaved
+	# 'blockquote' and 'li' tag pairs because Markdown starts thinking it's in
+	# span mode, and then reparses the span-mode output in block mode.
+	#
+	# Blockquote-in-list detection is solved by letting the list item
+	# processor check for existence of >-starting lines in the whole item.
+	# Since this is inefficient, we allow the user to disable running
+	# blockquotes, in which case blockquotes cannot start mid-paragraph
+	# (consistently with the list behavior) and the blockquote-in-list
+	# detection is much more efficient.
+
+	if ($p{running_blockquotes}) {
+		$p{_blockquote_lead} = '';
+		$p{_list_blockquote_pattern} = qr/^[ \t]*>/m;
+	} else {
+		$p{_blockquote_lead} = qr/(?:(?<=\n\n)|\A\n?)/;
+		$p{_list_blockquote_pattern} = qr/\A>/;
 	}
 
 	my $self = { params => \%p };
@@ -1276,7 +1304,8 @@ sub _ProcessListItems {
 		my $leading_line = $1;
 		my $leading_space = $2;
 
-		if ($leading_line or ($item =~ m/\n{2,}/)) {
+		if ($leading_line or ($item =~ m/\n{2,}/)
+				or ($item =~ $self->{_list_blockquote_pattern})) {
 			$item = $self->_RunBlockGamut($self->_Outdent($item));
 		}
 		else {
@@ -1452,6 +1481,7 @@ sub _DoBlockQuotes {
 	my ($self, $text) = @_;
 
 	$text =~ s{
+		  $self->{_blockquote_lead}
 		  (								# Wrap whole match in $1
 			(
 			  ^[ \t]*>[ \t]?			# '>' at the start of a line
