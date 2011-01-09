@@ -155,6 +155,9 @@ else {
 				heading_ids => 0,
 				img_ids => 0,
 				codeblocks_newline => "\n",
+				disable_tables => 1,
+				disable_footnotes =>1,
+				disable_bibliography =>1,
 			);
 		}
 
