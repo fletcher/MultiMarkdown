@@ -1773,7 +1773,7 @@ sub _ParseMetaData {
 	my ($self, $text) = @_;
 	my $clean_text = "";
 
-	my ($inMetaData, $currentKey) = (1,'');
+	my ($inMetaData, $currentKey, $lckey) = (1,'', '');
 
 	# If only metadata is "Format: complete" then skip
 
@@ -1792,22 +1792,23 @@ sub _ParseMetaData {
 				my $meta = $2;
 				$currentKey =~ s/\s+/ /g;
 				$currentKey =~ s/\s$//;
+				$lckey = lc $currentKey;
 				$self->{_metadata}{$currentKey} = $meta;
-				if (lc($currentKey) eq "format") {
+				if ($lckey eq "format") {
 					$self->{document_format} = lc($self->{_metadata}{$currentKey});
 				}
-				if (lc($currentKey) eq "base url") {
+				if ($lckey eq "base url") {
 					$self->{base_url} = $self->{_metadata}{$currentKey};
 				}
-				if (lc($currentKey) eq "bibliography title") {
+				if ($lckey eq "bibliography title") {
 					$self->{bibliography_title} = $self->{_metadata}{$currentKey};
 					$self->{bibliography_title} =~ s/\s*$//;
 				}
-				if (lc($currentKey) eq "base header level") {
+				if ($lckey eq "base header level") {
 					$self->{base_header_level} = $self->{_metadata}{$currentKey};
 				}
-				if (!$self->{_metadata_newline}{$currentKey}) {
-					$self->{_metadata_newline}{$currentKey} = $self->{_metadata_newline}{default};
+				if (!$self->{_metadata_newline}{$lckey}) {
+					$self->{_metadata_newline}{$lckey} = $self->{_metadata_newline}{default};
 				}
 			} else {
 				if ($currentKey eq "") {
@@ -1817,7 +1818,7 @@ sub _ParseMetaData {
 					next;
 				}
 				if ($line =~ /^\s*(.+)$/ ) {
-					$self->{_metadata}{$currentKey} .= "$self->{_metadata_newline}{$currentKey}$1";
+					$self->{_metadata}{$currentKey} .= "$self->{_metadata_newline}{$lckey}$1";
 				}
 			}
 		} else {
