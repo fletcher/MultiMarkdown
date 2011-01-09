@@ -38,15 +38,7 @@ use base        'Exporter';
 our $VERSION = '2.0.b6';
 our @EXPORT_OK = qw{markdown};
 
-eval {require MT};  # Test to see if we're running in MT.
-unless ($@) {
-	require Text::ASCIIMathML;
-} else {	# Otherwise look for ASCIIMathML.pm next to MultiMarkdown.pl
-	my $me = __FILE__;				# Where am I?
-
-	my $path = dirname($me);
-	require File::Spec->join($path, "ASCIIMathML.pm");
-}
+require Text::ASCIIMathML;
 
 our $mathParser = new Text::ASCIIMathML();
 
@@ -2642,6 +2634,15 @@ sub _UnescapeComments{
 	}egsx;
 
 	return $text;
+}
+
+package Text::MultiMarkdown;
+use base 'MultiMarkdown';
+
+our @EXPORT_OK = qw{markdown};
+
+sub markdown {
+	MultiMarkdown::markdown(@_)
 }
 
 1;
