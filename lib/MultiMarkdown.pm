@@ -100,6 +100,7 @@ our %g_default_settings = (
 	use_wikilinks => 0,
 	codeblocks_newline => '',
 	running_blockquotes => 1,
+	running_lists => undef,
 );
 
 =head1 NAME
@@ -323,6 +324,18 @@ sub new {
 	} else {
 		$p{_blockquote_lead} = qr/(?:(?<=\n\n)|\A\n?)/;
 		$p{_list_blockquote_pattern} = qr/\A>/;
+	}
+
+	# As an extension to Markdown, we also support running lists, i.e.
+	# lists that can start in the middle of a pragraph. running_lists is
+	# undef by default, and when defined it should be set to the regexp
+	# that must match at the end of the preceding line to allow a running
+	# list (typically something like ':' would be used);
+
+	if (defined $p{running_lists}) {
+		$p{_list_lead} = qr/(?:(?<=\n\n|$p{running_lists}\n)|\A\n?)/;
+	} else {
+		$p{_list_lead} = qr/(?:(?<=\n\n)|\A\n?)/;
 	}
 
 	my $self = { params => \%p };
@@ -1237,7 +1250,7 @@ sub _DoLists {
 	}
 	else {
 		$text =~ s{
-				(?:(?<=\n\n)|\A\n?)
+				$self->{_list_lead}
 				$whole_list
 			}{
 				my $list = $1;
