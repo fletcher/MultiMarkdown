@@ -9,7 +9,7 @@ use File::Spec;
 
 eval {require MultiMarkdown};
 if ($@) {
-	my $me = readlink(__FILE__);
+	my $me = readlink(__FILE__) || __FILE__;
 
 	my $path = dirname(dirname($me));
 
