@@ -1801,9 +1801,9 @@ sub _DoFootnotes {
 		if (defined $g_footnotes{$id} ) {
 			$g_footnote_counter++;
 			if ($g_footnotes{$id} =~ /^(<p>)?glossary:/i) {
-				$result = "<a href=\"#fn:$id\" id=\"fnref:$id\" title=\"see glossary\" class=\"footnote glossary\">$g_footnote_counter</a>";
+				$result = "<a name=\"fnref_$id\"></a><a href=\"#fn_$id\" title=\"see glossary\" class=\"footnote glossary\">$g_footnote_counter</a>";
 			} else {
-				$result = "<a href=\"#fn:$id\" id=\"fnref:$id\" title=\"see footnote\" class=\"footnote\">$g_footnote_counter</a>";
+				$result = "<a name=\"fnref_$id\"></a><a href=\"#fn_$id\" title=\"see footnote\" class=\"footnote\">$g_footnote_counter</a>";
 			}
 			push (@g_used_footnotes,$id);
 		}
@@ -1851,9 +1851,9 @@ sub _PrintFootnotes{
 				$glossary . ":<p>";	
 			}egsx;
 
-			$result.="<li id=\"fn:$id\">$footnote<a href=\"#fnref:$id\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>$footnote_closing_tag</li>\n\n";
+			$result.="<li id=\"fn_$id\"><a name=\"fn_$id\"></a>$footnote<a href=\"#fnref_$id\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>$footnote_closing_tag</li>\n\n";
 		} else {
-			$result.="<li id=\"fn:$id\">$footnote<a href=\"#fnref:$id\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>$footnote_closing_tag</li>\n\n";
+			$result.="<li id=\"fn_$id\"><a name=\"fn_$id\"></a>$footnote<a href=\"#fnref_$id\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>$footnote_closing_tag</li>\n\n";
 		}
 	}
 	$result .= "</ol>\n</div>";
@@ -1878,7 +1878,7 @@ sub Header2Label {
 }
 
 sub id2footnote {
-	# Since we prepend "fn:", we can allow leading digits in footnotes
+	# Since we prepend "fn_", we can allow leading digits in footnotes
 	my $id = shift;
 	my $footnote = lc $id;
 	$footnote =~ s/[^A-Za-z0-9:_.-]//g;		# Strip illegal characters
