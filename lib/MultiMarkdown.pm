@@ -392,7 +392,7 @@ sub _CleanUpRunData {
 	$self->{_crossrefs} = {};
 	$self->{_footnotes} = {};
 	$self->{_attributes} = {};
-	$self->{_used_footnotes} = [];
+	$self->{_used_footnotes} = {};
 	$self->{_footnote_counter} = 0;
 	$self->{_used_references} = [];
 	$self->{_citation_counter} = 0;
@@ -1910,13 +1910,21 @@ sub _DoFootnotes {
 		my $result = "";
 		my $id = _Id2Footnote($1);
 		if (defined $self->{_footnotes}{$id} ) {
-			$self->{_footnote_counter}++;
-			if ($self->{_footnotes}{$id} =~ /^(<p>)?glossary:/i) {
-				$result = "<a href=\"#fn:$id\" id=\"fnref:$id\" title=\"see glossary\" class=\"footnote glossary\">$self->{_footnote_counter}</a>";
+			my $fn = $self->{_used_footnotes};
+			my ($counter, $uses);
+			if (defined $fn->{$id}) {
+				$counter = $fn->{$id}->{counter};
+				$uses = $fn->{$id}->{uses}+1;
 			} else {
-				$result = "<a href=\"#fn:$id\" id=\"fnref:$id\" title=\"see footnote\" class=\"footnote\">$self->{_footnote_counter}</a>";
+				$counter = $self->{_footnote_counter}++;
+				$uses = 1;
 			}
-			push (@{$self->{_used_footnotes}},$id);
+			if ($self->{_footnotes}{$id} =~ /^(<p>)?glossary:/i) {
+				$result = "<a href=\"#fn:$id\" id=\"fnref:$id:$uses\" title=\"see glossary\" class=\"footnote glossary\">$counter</a>";
+			} else {
+				$result = "<a href=\"#fn:$id\" id=\"fnref:$id:$uses\" title=\"see footnote\" class=\"footnote\">$counter</a>";
+			}
+			$fn->{$id} = { counter => $counter, uses => $uses };
 		}
 		$result;
 	}xsge;
@@ -1937,8 +1945,10 @@ sub _PrintFootnotes {
 	my $footnote_counter = 0;
 	my $result = "";
 
-	foreach my $id (@{$self->{_used_footnotes}}) {
-		$footnote_counter++;
+	while (my ($id, $hash) = each(%{$self->{_used_footnotes}})) {
+		$footnote_counter = $hash->{counter};
+		my $uses = $hash->{uses};
+		my $use = 0;
 		my $footnote = $self->{_footnotes}{$id};
 		my $footnote_closing_tag = "";
 
@@ -1963,10 +1973,16 @@ sub _PrintFootnotes {
 				$glossary . ":<p>";
 			}egsx;
 
-			$result.="<li id=\"fn:$id\">$footnote<a href=\"#fnref:$id\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>$footnote_closing_tag</li>\n\n";
+			$result.="<li id=\"fn:$id\">$footnote";
 		} else {
-			$result.="<li id=\"fn:$id\">$footnote<a href=\"#fnref:$id\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>$footnote_closing_tag</li>\n\n";
+			$result.="<li id=\"fn:$id\">$footnote";
 		}
+		while ($use < $uses) {
+			$use++;
+			$result.="<a href=\"#fnref:$id:$use\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>";
+			$result.=" " if $use < $uses; # some whitespace between backreferences
+		}
+		$result.="$footnote_closing_tag</li>\n\n";
 	}
 	$result .= "</ol>\n</div>";
 
