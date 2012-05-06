@@ -557,7 +557,10 @@ our $g_block_tags = qr{
 	  (?:
 		p         |  div     |  h[1-6]  |  blockquote  |  pre       |  table  |
 		dl        |  ol      |  ul      |  script      |  noscript  |  form   |
-		fieldset  |  iframe     |  ins         |  del
+		fieldset  |  iframe  |  ins     |  del         |
+		# HTML5
+		article   |  header  |  footer  |  section     |  aside     |  video  |
+		output    |  hgroup  |  canvas  |  figure | nav
 	  )
 	}x;			# MultiMarkdown does not include `math` in the above list so that
 				# Equations can optionally be included in separate paragraphs
