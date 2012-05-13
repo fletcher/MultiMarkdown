@@ -1916,7 +1916,7 @@ sub _DoFootnotes {
 				$counter = $fn->{$id}->{counter};
 				$uses = $fn->{$id}->{uses}+1;
 			} else {
-				$counter = $self->{_footnote_counter}++;
+				$counter = ++$self->{_footnote_counter};
 				$uses = 1;
 			}
 			if ($self->{_footnotes}{$id} =~ /^(<p>)?glossary:/i) {
