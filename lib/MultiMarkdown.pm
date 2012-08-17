@@ -1943,6 +1943,7 @@ sub _FixFootnoteParagraphs {
 sub _PrintFootnotes {
 	my $self = shift;
 	my $footnote_counter = 0;
+	my @fnlist = ();
 	my $result = "";
 
 	while (my ($id, $hash) = each(%{$self->{_used_footnotes}})) {
@@ -1951,6 +1952,7 @@ sub _PrintFootnotes {
 		my $use = 0;
 		my $footnote = $self->{_footnotes}{$id};
 		my $footnote_closing_tag = "";
+		my $fntext = "";
 
 		$footnote =~ s/(\<\/(p(re)?|ol|ul)\>)$//;
 		$footnote_closing_tag = $1;
@@ -1973,21 +1975,22 @@ sub _PrintFootnotes {
 				$glossary . ":<p>";
 			}egsx;
 
-			$result.="<li id=\"fn:$id\">$footnote";
+			$fntext.="<li id=\"fn:$id\">$footnote";
 		} else {
-			$result.="<li id=\"fn:$id\">$footnote";
+			$fntext.="<li id=\"fn:$id\">$footnote";
 		}
 		while ($use < $uses) {
 			$use++;
-			$result.="<a href=\"#fnref:$id:$use\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>";
-			$result.=" " if $use < $uses; # some whitespace between backreferences
+			$fntext.="<a href=\"#fnref:$id:$use\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>";
+			$fntext.=" " if $use < $uses; # some whitespace between backreferences
 		}
-		$result.="$footnote_closing_tag</li>\n\n";
+		$fntext.="$footnote_closing_tag</li>\n\n";
+		$fnlist[$footnote_counter-1] = $fntext;
 	}
-	$result .= "</ol>\n</div>";
 
-	if ($footnote_counter > 0) {
-		$result = "\n\n<div class=\"footnotes\">\n<hr$self->{empty_element_suffix}\n<ol>\n\n".$result;
+	if (@fnlist > 0) {
+		$result = "\n\n<div class=\"footnotes\">\n<hr$self->{empty_element_suffix}\n<ol>\n\n".
+			join('',@fnlist) . "</ol>\n</div>";
 	} else {
 		$result = "";
 	}
