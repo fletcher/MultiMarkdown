@@ -1893,16 +1893,8 @@ sub _StripFootnoteDefinitions {
 	return $text;
 }
 
-sub _DoFootnotes {
+sub _DoFootnoteMarks {
 	my ($self, $text) = @_;
-
-	# First, run routines that get skipped in footnotes
-	foreach my $label (sort keys %{$self->{_footnotes}}) {
-		my $footnote = $self->_RunBlockGamut($self->{_footnotes}{$label});
-
-		$footnote = $self->_DoMarkdownCitations($footnote);
-		$self->{_footnotes}{$label} = $footnote;
-	}
 
 	$text =~ s{
 		\[\^(.+?)\]		# id = $1
@@ -1930,6 +1922,21 @@ sub _DoFootnotes {
 	}xsge;
 
 	return $text;
+}
+
+sub _DoFootnotes {
+	my ($self, $text) = @_;
+
+	# First, run routines that get skipped in footnotes
+	foreach my $label (sort keys %{$self->{_footnotes}}) {
+		my $footnote = $self->_RunBlockGamut($self->{_footnotes}{$label});
+
+		$footnote = $self->_DoMarkdownCitations($footnote);
+		$footnote = $self->_DoFootnoteMarks($footnote);
+		$self->{_footnotes}{$label} = $footnote;
+	}
+
+	return $self->_DoFootnoteMarks($text);
 }
 
 sub _FixFootnoteParagraphs {
