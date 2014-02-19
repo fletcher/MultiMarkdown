@@ -2,6 +2,8 @@
 
 	*italic*   **bold**
 	_italic_   __bold__
+	__*italic and bold*__   **_italic and bold_**
+	~~scratch~~
 
 
 ## Links ##
