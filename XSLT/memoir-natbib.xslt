@@ -50,8 +50,8 @@
 \usepackage{layouts}[2001/04/29]
 \usepackage[round,sort&amp;compress]{natbib}
 \setcitestyle{super,open={},close={},comma}
-
-\makeglossary
+\usepackage{glossaries}
+\makeglossaries
 \makeindex
 
 \def\mychapterstyle{default}

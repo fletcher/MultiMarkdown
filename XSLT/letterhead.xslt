@@ -292,7 +292,7 @@
 \bibliocommand
 
 %	Glossary
-\printglossary
+\printglossaries
 
 
 %	Index

@@ -53,7 +53,8 @@
 	<xsl:template name="latex-document-class">
 		<xsl:text>\documentclass[10pt,twoside]{memoir}
 \usepackage{layouts}[2001/04/29]
-\makeglossary
+\usepackage{glossaries}
+\makeglossaries
 \makeindex
 
 \def\mychapterstyle{companion}
