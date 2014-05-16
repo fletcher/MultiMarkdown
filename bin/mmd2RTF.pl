@@ -79,6 +79,12 @@ sub LocateMMD {
 	my $os = $^O;	# Mac = darwin; Linux = linux; Windows contains MSWin
 	my $MMDPath = "";
 
+  my $orig = cwd();
+
+  chdir(dirname($0));
+  if (readlink($0)) { chdir(dirname(readlink($0))); }
+  $me = ".";
+
 	# Determine where MMD is installed.  Use a "common installation"
 	# if available.
 
@@ -142,6 +148,8 @@ sub LocateMMD {
 
 	# Clean up the path
 	$MMDPath = abs_path($MMDPath);
+
+  chdir($orig);
 
 	return $MMDPath;
 }
