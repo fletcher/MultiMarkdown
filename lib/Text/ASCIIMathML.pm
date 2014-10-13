@@ -903,6 +903,7 @@ sub _parseExpr : method {
     my $newFrag = $self->_createDocumentFragment();
     my ($node, $input, $symbol);
     do {
+	$str = _replaceUniSuperSubScripts($str);
 	$str = _removeCharsAndBlanks($str, 0);
 	($node, $str) = $self->_parseIexpr($str);
 	($input, $symbol) = $self->_getSymbol($str);
@@ -1336,6 +1337,69 @@ sub _removeCharsAndBlanks {
 		    substr($str, $n) =~ /^\\[^\\ ,!]/ ? $n+1 : $n);
     $st =~ s/^[\x00-\x20]+//;
     return $st;
+}
+
+BEGIN {
+my %UnicodeSuperscripts = (
+"⁰" => "0",
+"¹" => "1",
+"²" => "2",
+"³" => "3",
+"⁴" => "4",
+"⁵" => "5",
+"⁶" => "6",
+"⁷" => "7",
+"⁸" => "8",
+"⁹" => "9",
+"⁺" => "+",
+"⁻" => "-",
+"⁼" => "=",
+"⁽" => "(",
+"⁾" => ")",
+"ⁿ" => "n",
+);
+
+my %UnicodeSubscripts = (
+"₀" => "0",
+"₁" => "1",
+"₂" => "2",
+"₃" => "3",
+"₄" => "4",
+"₅" => "5",
+"₆" => "6",
+"₇" => "7",
+"₈" => "8",
+"₉" => "9",
+"₊" => "+",
+"₋" => "-",
+"₌" => "=",
+"₍" => "(",
+"₎" => ")",
+);
+
+my $UnicodeSupRE = join '|', keys %UnicodeSuperscripts;
+my $UnicodeSubRE = join '|', keys %UnicodeSubscripts;
+
+# Replaces Unicode superscripts and subscripts with corresponding
+# ASCIIMathML syntax
+# Arguments: string
+# Returns:   resultant string
+sub _replaceUniSuperSubScripts {
+    my ($s) = @_;
+    $s =~ s@(($UnicodeSupRE)+)@
+        my $repl = $1;
+        $repl =~ s/($UnicodeSupRE)/$UnicodeSuperscripts{$1}/eg;
+        (length $repl) > 1 ? "^($repl)" : "^$repl";
+    @egs;
+
+    $s =~ s@(($UnicodeSubRE)+)@
+        my $repl = $1;
+        $repl =~ s/($UnicodeSubRE)/$UnicodeSubscripts{$1}/eg;
+        (length $repl) > 1 ? "_($repl)" : "_$repl";
+    @egs;
+
+    return $s;
+}
 }
 
 # Removes outermost parenthesis
