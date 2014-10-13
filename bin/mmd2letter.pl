@@ -31,7 +31,7 @@ use Cwd 'abs_path';
 
 # Determine where MMD is installed.  Use a "common installation" if available.
 
-my $me = readlink(__FILE__);		# Where is this script located?
+my $me = readlink(__FILE__) || __FILE__;		# Where is this script located?
 my $MMDPath = LocateMMD($me);
 
 # Determine whether we are in "file mode" or "stdin mode"
