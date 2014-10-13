@@ -15,7 +15,6 @@
 # Based on Markdown.pl 1.0.2b8 -  Wed 09 May 2007
 #
 #
-#	TODO: Change math mode delimiter?
 #	TODO: Still need to get the glossary working in non-memoir documents
 #	TODO: A mechanism to include arbitrary code (LaTeX, etc) without being "ugly"
 #	TODO: Look into discussion re: assigning classes to div's/span's on Markdown list.
@@ -2580,6 +2579,7 @@ sub _DoMathSpans {
 	my $display_as_block = 0;
 	$display_as_block = 1 if ($text =~ /^<<[^\>\>]*>>$/);
 
+	# << .. >> delimiters
 	$text =~ s{
 			(?<!\\)		# Character before opening << can't be a backslash
 			(<<)		# $1 = Opening
@@ -2600,6 +2600,34 @@ sub _DoMathSpans {
 			}
 			$m =~ s/^[ \t]*//g; # leading whitespace
 			$m =~ s/[ \t]*$//g; # trailing whitespace
+			push(@attr,(id=>"$label")) if ($label ne "");
+			push(@attr,(display=>"block")) if ($display_as_block == 1);
+
+			$m = $mathParser->TextToMathML($m,\@attr);
+			"$m";
+		}egsx;
+
+	$display_as_block = 1 if ($text =~ /^\$(?:\S|\S.+?\S)\$$/);
+
+	# $..$ delimiters, there must be no whitespace after the first $ and no whitespace before the second $
+	$text =~ s{
+			(?<!\\)		# Character before opening $ can't be a backslash
+			(\$)		# $1 = Opening
+			(\S|\S.*?\S)	# $2 = The code block
+			(?:\[(.+)\])?	# $3 = optional label
+			(\$)
+		}{
+			my $m = "$2";
+			my $label = "";
+			my @attr = (); # assume HTML5, no namespace
+
+			if (defined $3) {
+				$label = _Header2Label($3);
+				my $header = $self->_RunSpanGamut($3);
+
+				$self->{_crossrefs}{$label} = "#$label";
+				$self->{_titles}{$label} = $header;
+			}
 			push(@attr,(id=>"$label")) if ($label ne "");
 			push(@attr,(display=>"block")) if ($display_as_block == 1);
 
