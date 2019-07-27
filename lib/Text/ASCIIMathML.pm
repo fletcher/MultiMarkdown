@@ -803,6 +803,8 @@ my %AMSymbol = (
 "ℤ" => { tag=>"mo", output=>"&#x2124;", tex=>'', ttype=>"CONST" },
 "f" => { tag=>"mi", output=>"f",      tex=>'', ttype=>"UNARY", func=>"true" },
 "g" => { tag=>"mi", output=>"g",      tex=>'', ttype=>"UNARY", func=>"true" },
+"€" => { tag=>"mi", output=>"&#x20ac;", tex=>'', ttype=>"CONST" },
+"¤" => { tag=>"mi", output=>"&#164;", tex=>'\textcurrency', ttype=>"CONST" },
 
 # standard functions
 "lim" => { tag=>"mo", output=>"lim", tex=>'', ttype=>"UNDEROVER" },
