@@ -830,6 +830,24 @@ my %AMSymbol = (
 "min" => { tag=>"mo", output=>"min", tex=>'', ttype=>"UNDEROVER" },
 "max" => { tag=>"mo", output=>"max", tex=>'', ttype=>"UNDEROVER" },
 
+# inverse trig functions are in the .js now, let's have them here too
+"arcsin" => { tag=>"mo", output=>"arcsin", tex=>'', ttype=>"UNARY", func=>"true" },
+"arccos" => { tag=>"mo", output=>"arccos", tex=>'', ttype=>"UNARY", func=>"true" },
+"arctan" => { tag=>"mo", output=>"arctan", tex=>'', ttype=>"UNARY", func=>"true" },
+"arccot" => { tag=>"mo", output=>"arccot", tex=>'', ttype=>"UNARY", func=>"true" },
+"arcsec" => { tag=>"mo", output=>"arcsec", tex=>'', ttype=>"UNARY", func=>"true" },
+"arccsc" => { tag=>"mo", output=>"arccsc", tex=>'', ttype=>"UNARY", func=>"true" },
+"arcsinh" => { tag=>"mo", output=>"arcsinh", tex=>'', ttype=>"UNARY", func=>"true" },
+"arccosh" => { tag=>"mo", output=>"arccosh", tex=>'', ttype=>"UNARY", func=>"true" },
+"arctanh" => { tag=>"mo", output=>"arctanh", tex=>'', ttype=>"UNARY", func=>"true" },
+"arccoth" => { tag=>"mo", output=>"arccoth", tex=>'', ttype=>"UNARY", func=>"true" },
+
+# also, we're quirky like this:
+"versin" => { tag=>"mo", output=>"versin", tex=>'', ttype=>"UNARY", func=>"true" },
+"coversin" => { tag=>"mo", output=>"coversin", tex=>'', ttype=>"UNARY", func=>"true" },
+"exsec" => { tag=>"mo", output=>"exsec", tex=>'', ttype=>"UNARY", func=>"true" },
+"excsc" => { tag=>"mo", output=>"excsc", tex=>'', ttype=>"UNARY", func=>"true" },
+
 # arrows
 "uarr" => { tag=>"mo", output=>"&#x2191;", tex=>"uparrow", ttype=>"CONST" },
 "darr" => { tag=>"mo", output=>"&#x2193;", tex=>"downarrow", ttype=>"CONST" },
