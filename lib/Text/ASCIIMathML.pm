@@ -591,6 +591,7 @@ my $AMbbb = [0xEF8C,0xEF8D,0x2102,0xEF8E,0xEF8F,0xEF90,0xEF91,0x210D,0xEF92,0xEF
 # Create closure for static variables
 my %AMSymbol = (
 "sqrt" => { tag=>"msqrt", output=>"sqrt", tex=>'', ttype=>"UNARY" },
+"√" => { tag=>"msqrt", output=>"sqrt", tex=>'', ttype=>"UNARY" },
 "root" => { tag=>"mroot", output=>"root", tex=>'', ttype=>"BINARY" },
 "frac" => { tag=>"mfrac", output=>"/",    tex=>'', ttype=>"BINARY" },
 "/" => { tag=>"mfrac", output=>"/",    tex=>'', ttype=>"INFIX" },
@@ -607,7 +608,9 @@ my %AMSymbol = (
 
 # some greek symbols
 "alpha" => { tag=>"mi", output=>"&#x03B1;", tex=>'', ttype=>"CONST" },
+"α" => { tag=>"mi", output=>"&#x03B1;", tex=>'', ttype=>"CONST" },
 "beta" => { tag=>"mi", output=>"&#x03B2;", tex=>'', ttype=>"CONST" },
+"β" => { tag=>"mi", output=>"&#x03B2;", tex=>'', ttype=>"CONST" },
 "chi" => { tag=>"mi", output=>"&#x03C7;", tex=>'', ttype=>"CONST" },
 "delta" => { tag=>"mi", output=>"&#x03B4;", tex=>'', ttype=>"CONST" },
 "Delta" => { tag=>"mo", output=>"&#x0394;", tex=>'', ttype=>"CONST" },
@@ -625,7 +628,9 @@ my %AMSymbol = (
 "omega" => { tag=>"mi", output=>"&#x03C9;", tex=>'', ttype=>"CONST" },
 "Omega" => { tag=>"mo", output=>"&#x03A9;", tex=>'', ttype=>"CONST" },
 "phi" => { tag=>"mi", output=>"&#x03D5;", tex=>'', ttype=>"CONST" },
+"ϕ" => { tag=>"mi", output=>"&#x03D5;", tex=>'', ttype=>"CONST" },
 "varphi" => { tag=>"mi", output=>"&#x03C6;", tex=>'', ttype=>"CONST" },
+"φ" => { tag=>"mi", output=>"&#x03C6;", tex=>'', ttype=>"CONST" },
 "Phi" => { tag=>"mo", output=>"&#x03A6;", tex=>'', ttype=>"CONST" },
 "pi" => { tag=>"mi", output=>"&#x03C0;", tex=>'', ttype=>"CONST" },
 "Pi" => { tag=>"mo", output=>"&#x03A0;", tex=>'', ttype=>"CONST" },
@@ -636,7 +641,9 @@ my %AMSymbol = (
 "Sigma" => { tag=>"mo", output=>"&#x03A3;", tex=>'', ttype=>"CONST" },
 "tau" => { tag=>"mi", output=>"&#x03C4;", tex=>'', ttype=>"CONST" },
 "theta" => { tag=>"mi", output=>"&#x03B8;", tex=>'', ttype=>"CONST" },
+"θ" => { tag=>"mi", output=>"&#x03B8;", tex=>'', ttype=>"CONST" },
 "vartheta" => { tag=>"mi", output=>"&#x03D1;", tex=>'', ttype=>"CONST" },
+"ϑ" => { tag=>"mi", output=>"&#x03D1;", tex=>'', ttype=>"CONST" },
 "Theta" => { tag=>"mo", output=>"&#x0398;", tex=>'', ttype=>"CONST" },
 "upsilon" => { tag=>"mi", output=>"&#x03C5;", tex=>'', ttype=>"CONST" },
 "xi" => { tag=>"mi", output=>"&#x03BE;", tex=>'', ttype=>"CONST" },
@@ -645,12 +652,16 @@ my %AMSymbol = (
 
 # binary operation symbols
 "*" => { tag=>"mo", output=>"&#x22C5;", tex=>"cdot", ttype=>"CONST" },
+"⋅" => { tag=>"mo", output=>"&#x22C5;", tex=>"cdot", ttype=>"CONST" },
 "**" => { tag=>"mo", output=>"&#x22C6;", tex=>"star", ttype=>"CONST" },
 "//" => { tag=>"mo", output=>"/",      tex=>'', ttype=>"CONST" },
 "\\\\" => { tag=>"mo", output=>"\\",   tex=>"backslash", ttype=>"CONST" },
 "setminus" => { tag=>"mo", output=>"\\", tex=>'', ttype=>"CONST" },
+"∖" => { tag=>"mo", output=>"\\", tex=>'', ttype=>"CONST" },
 "xx" => { tag=>"mo", output=>"&#x00D7;", tex=>"times", ttype=>"CONST" },
+"×" => { tag=>"mo", output=>"&#x00D7;", tex=>"times", ttype=>"CONST" },
 "-:" => { tag=>"mo", output=>"&#x00F7;", tex=>"div", ttype=>"CONST" },
+"÷" => { tag=>"mo", output=>"&#x00F7;", tex=>"div", ttype=>"CONST" },
 "@" => { tag=>"mo", output=>"&#x2218;", tex=>"circ", ttype=>"CONST" },
 "o+" => { tag=>"mo", output=>"&#x2295;", tex=>"oplus", ttype=>"CONST" },
 "ox" => { tag=>"mo", output=>"&#x2297;", tex=>"otimes", ttype=>"CONST" },
@@ -668,26 +679,41 @@ my %AMSymbol = (
 
 # binary relation symbols
 "!=" => { tag=>"mo", output=>"&#x2260;", tex=>"ne", ttype=>"CONST" },
+"≠" => { tag=>"mo", output=>"&#x2260;", tex=>"ne", ttype=>"CONST" },
 ":=" => { tag=>"mo", output=>":=",     tex=>'', ttype=>"CONST" },
 #"lt" => { tag=>"mo", output=>"<",      tex=>'', ttype=>"CONST" },
 "lt" => { tag=>"mo", output=>"&lt;",      tex=>'', ttype=>"CONST" },
 "<=" => { tag=>"mo", output=>"&#x2264;", tex=>"le", ttype=>"CONST" },
+"≤" => { tag=>"mo", output=>"&#x2264;", tex=>"le", ttype=>"CONST" },
 "lt=" => { tag=>"mo", output=>"&#x2264;", tex=>"leq", ttype=>"CONST", latex=>1 },
 ">=" => { tag=>"mo", output=>"&#x2265;", tex=>"ge", ttype=>"CONST" },
 "geq" => { tag=>"mo", output=>"&#x2265;", tex=>'', ttype=>"CONST", latex=>1 },
+"≥" => { tag=>"mo", output=>"&#x2265;", tex=>"ge", ttype=>"CONST" },
 "-<" => { tag=>"mo", output=>"&#x227A;", tex=>"prec", ttype=>"CONST", latex=>1 },
+"≺" => { tag=>"mo", output=>"&#x227A;", tex=>"prec", ttype=>"CONST", latex=>1 },
 "-lt" => { tag=>"mo", output=>"&#x227A;", tex=>'', ttype=>"CONST" },
 ">-" => { tag=>"mo", output=>"&#x227B;", tex=>"succ", ttype=>"CONST" },
+"≻" => { tag=>"mo", output=>"&#x227B;", tex=>"succ", ttype=>"CONST" },
 "in" => { tag=>"mo", output=>"&#x2208;", tex=>'', ttype=>"CONST" },
+"∈" => { tag=>"mo", output=>"&#x2208;", tex=>'', ttype=>"CONST" },
 "!in" => { tag=>"mo", output=>"&#x2209;", tex=>"notin", ttype=>"CONST" },
+"∉" => { tag=>"mo", output=>"&#x2209;", tex=>"notin", ttype=>"CONST" },
 "sub" => { tag=>"mo", output=>"&#x2282;", tex=>"subset", ttype=>"CONST" },
+"⊂" => { tag=>"mo", output=>"&#x2282;", tex=>"subset", ttype=>"CONST" },
 "sup" => { tag=>"mo", output=>"&#x2283;", tex=>"supset", ttype=>"CONST" },
+"⊃" => { tag=>"mo", output=>"&#x2283;", tex=>"supset", ttype=>"CONST" },
 "sube" => { tag=>"mo", output=>"&#x2286;", tex=>"subseteq", ttype=>"CONST" },
+"⊆" => { tag=>"mo", output=>"&#x2286;", tex=>"subseteq", ttype=>"CONST" },
 "supe" => { tag=>"mo", output=>"&#x2287;", tex=>"supseteq", ttype=>"CONST" },
+"⊇" => { tag=>"mo", output=>"&#x2287;", tex=>"supseteq", ttype=>"CONST" },
 "-=" => { tag=>"mo", output=>"&#x2261;", tex=>"equiv", ttype=>"CONST" },
+"≡" => { tag=>"mo", output=>"&#x2261;", tex=>"equiv", ttype=>"CONST" },
 "~=" => { tag=>"mo", output=>"&#x2245;", tex=>"cong", ttype=>"CONST" },
+"≅" => { tag=>"mo", output=>"&#x2245;", tex=>"cong", ttype=>"CONST" },
 "~~" => { tag=>"mo", output=>"&#x2248;", tex=>"approx", ttype=>"CONST" },
+"≈" => { tag=>"mo", output=>"&#x2248;", tex=>"approx", ttype=>"CONST" },
 "prop" => { tag=>"mo", output=>"&#x221D;", tex=>"propto", ttype=>"CONST" },
+"∝" => { tag=>"mo", output=>"&#x221D;", tex=>"propto", ttype=>"CONST" },
 
 # new for perl
 "<" => { tag=>"mo", output=>"&lt;",      tex=>'', ttype=>"CONST" },
@@ -701,10 +727,14 @@ my %AMSymbol = (
 "or" => { tag=>"mtext", output=>"or",  tex=>'', ttype=>"SPACE" },
 "not" => { tag=>"mo", output=>"&#x00AC;", tex=>"neg", ttype=>"CONST" },
 "=>" => { tag=>"mo", output=>"&#x21D2;", tex=>"implies", ttype=>"CONST" },
+"⇒" => { tag=>"mo", output=>"&#x21D2;", tex=>"implies", ttype=>"CONST" },
 "if" => { tag=>"mo", output=>"if",     tex=>'if', ttype=>"SPACE" },
 "<=>" => { tag=>"mo", output=>"&#x21D4;", tex=>"iff", ttype=>"CONST" },
+"⇔" => { tag=>"mo", output=>"&#x21D4;", tex=>"iff", ttype=>"CONST" },
 "AA" => { tag=>"mo", output=>"&#x2200;", tex=>"forall", ttype=>"CONST" },
+"∀" => { tag=>"mo", output=>"&#x2200;", tex=>"forall", ttype=>"CONST" },
 "EE" => { tag=>"mo", output=>"&#x2203;", tex=>"exists", ttype=>"CONST" },
+"∃" => { tag=>"mo", output=>"&#x2203;", tex=>"exists", ttype=>"CONST" },
 "_|_" => { tag=>"mo", output=>"&#x22A5;", tex=>"bot", ttype=>"CONST" },
 "TT" => { tag=>"mo", output=>"&#x22A4;", tex=>"top", ttype=>"CONST" },
 "|--" => { tag=>"mo", output=>"&#x22A2;", tex=>"vdash", ttype=>"CONST" },
@@ -718,6 +748,14 @@ my %AMSymbol = (
 "{" => { tag=>"mo", output=>"{", tex=>'', ttype=>"LEFTBRACKET" },
 "}" => { tag=>"mo", output=>"}", tex=>'', ttype=>"RIGHTBRACKET" },
 "|" => { tag=>"mo", output=>"|", tex=>'', ttype=>"LEFTRIGHT" },
+"|__" => { tag=>"mo", output=>"&#x230A;",  tex=>"lfloor", ttype=>"LEFTBRACKET" },
+"⌊" => { tag=>"mo", output=>"&#x230A;",  tex=>"lfloor", ttype=>"LEFTBRACKET" },
+"__|" => { tag=>"mo", output=>"&#x230B;",  tex=>"rfloor", ttype=>"RIGHTBRACKET" },
+"⌋" => { tag=>"mo", output=>"&#x230B;",  tex=>"rfloor", ttype=>"RIGHTBRACKET" },
+"|~" => { tag=>"mo", output=>"&#x2308;",  tex=>"lceil", ttype=>"LEFTBRACKET" },
+"⌈" => { tag=>"mo", output=>"&#x2308;",  tex=>"lceil", ttype=>"LEFTBRACKET" },
+"~|" => { tag=>"mo", output=>"&#x2309;",  tex=>"rceil", ttype=>"RIGHTBRACKET" },
+"⌉" => { tag=>"mo", output=>"&#x2309;",  tex=>"rceil", ttype=>"RIGHTBRACKET" },
 # {input:"||", tag:"mo", output:"||", tex:null, ttype:LEFTRIGHT},
 "(:" => { tag=>"mo", output=>"&#x2329;", tex=>"langle", ttype=>"LEFTBRACKET" },
 ":)" => { tag=>"mo", output=>"&#x232A;", tex=>"rangle", ttype=>"RIGHTBRACKET" },
@@ -736,9 +774,11 @@ my %AMSymbol = (
 "del" => { tag=>"mo", output=>"&#x2202;", tex=>"partial", ttype=>"CONST" },
 "grad" => { tag=>"mo", output=>"&#x2207;", tex=>"nabla", ttype=>"CONST" },
 "+-" => { tag=>"mo", output=>"&#x00B1;", tex=>"pm", ttype=>"CONST" },
+"±" => { tag=>"mo", output=>"&#x00B1;", tex=>"pm", ttype=>"CONST" },
 "O/" => { tag=>"mo", output=>"&#x2205;", tex=>"emptyset", ttype=>"CONST" },
 "oo" => { tag=>"mo", output=>"&#x221E;", tex=>"infty", ttype=>"CONST" },
 "aleph" => { tag=>"mo", output=>"&#x2135;", tex=>'', ttype=>"CONST" },
+"ℵ" => { tag=>"mo", output=>"&#x2135;", tex=>'', ttype=>"CONST" },
 "..." => { tag=>"mo", output=>"...",    tex=>"ldots", ttype=>"CONST" },
 ":." => { tag=>"mo", output=>"&#x2234;",  tex=>"therefore", ttype=>"CONST" },
 "/_" => { tag=>"mo", output=>"&#x2220;",  tex=>"angle", ttype=>"CONST" },
@@ -751,17 +791,20 @@ my %AMSymbol = (
 "ddots" => { tag=>"mo", output=>"&#x22F1;", tex=>'', ttype=>"CONST" },
 "diamond" => { tag=>"mo", output=>"&#x22C4;", tex=>'', ttype=>"CONST" },
 "square" => { tag=>"mo", output=>"&#x25A1;", tex=>'', ttype=>"CONST" },
-"|__" => { tag=>"mo", output=>"&#x230A;",  tex=>"lfloor", ttype=>"CONST" },
-"__|" => { tag=>"mo", output=>"&#x230B;",  tex=>"rfloor", ttype=>"CONST" },
-"|~" => { tag=>"mo", output=>"&#x2308;",  tex=>"lceil", ttype=>"CONST" },
-"~|" => { tag=>"mo", output=>"&#x2309;",  tex=>"rceil", ttype=>"CONST" },
 "CC" => { tag=>"mo", output=>"&#x2102;", tex=>'', ttype=>"CONST" },
+"ℂ" => { tag=>"mo", output=>"&#x2102;", tex=>'', ttype=>"CONST" },
 "NN" => { tag=>"mo", output=>"&#x2115;", tex=>'', ttype=>"CONST" },
+"ℕ" => { tag=>"mo", output=>"&#x2115;", tex=>'', ttype=>"CONST" },
 "QQ" => { tag=>"mo", output=>"&#x211A;", tex=>'', ttype=>"CONST" },
+"ℚ" => { tag=>"mo", output=>"&#x211A;", tex=>'', ttype=>"CONST" },
 "RR" => { tag=>"mo", output=>"&#x211D;", tex=>'', ttype=>"CONST" },
+"ℝ" => { tag=>"mo", output=>"&#x211D;", tex=>'', ttype=>"CONST" },
 "ZZ" => { tag=>"mo", output=>"&#x2124;", tex=>'', ttype=>"CONST" },
+"ℤ" => { tag=>"mo", output=>"&#x2124;", tex=>'', ttype=>"CONST" },
 "f" => { tag=>"mi", output=>"f",      tex=>'', ttype=>"UNARY", func=>"true" },
 "g" => { tag=>"mi", output=>"g",      tex=>'', ttype=>"UNARY", func=>"true" },
+"€" => { tag=>"mi", output=>"&#x20ac;", tex=>'', ttype=>"CONST" },
+"¤" => { tag=>"mi", output=>"&#164;", tex=>'\textcurrency', ttype=>"CONST" },
 
 # standard functions
 "lim" => { tag=>"mo", output=>"lim", tex=>'', ttype=>"UNDEROVER" },
@@ -787,11 +830,30 @@ my %AMSymbol = (
 "min" => { tag=>"mo", output=>"min", tex=>'', ttype=>"UNDEROVER" },
 "max" => { tag=>"mo", output=>"max", tex=>'', ttype=>"UNDEROVER" },
 
+# inverse trig functions are in the .js now, let's have them here too
+"arcsin" => { tag=>"mo", output=>"arcsin", tex=>'', ttype=>"UNARY", func=>"true" },
+"arccos" => { tag=>"mo", output=>"arccos", tex=>'', ttype=>"UNARY", func=>"true" },
+"arctan" => { tag=>"mo", output=>"arctan", tex=>'', ttype=>"UNARY", func=>"true" },
+"arccot" => { tag=>"mo", output=>"arccot", tex=>'', ttype=>"UNARY", func=>"true" },
+"arcsec" => { tag=>"mo", output=>"arcsec", tex=>'', ttype=>"UNARY", func=>"true" },
+"arccsc" => { tag=>"mo", output=>"arccsc", tex=>'', ttype=>"UNARY", func=>"true" },
+"arcsinh" => { tag=>"mo", output=>"arcsinh", tex=>'', ttype=>"UNARY", func=>"true" },
+"arccosh" => { tag=>"mo", output=>"arccosh", tex=>'', ttype=>"UNARY", func=>"true" },
+"arctanh" => { tag=>"mo", output=>"arctanh", tex=>'', ttype=>"UNARY", func=>"true" },
+"arccoth" => { tag=>"mo", output=>"arccoth", tex=>'', ttype=>"UNARY", func=>"true" },
+
+# also, we're quirky like this:
+"versin" => { tag=>"mo", output=>"versin", tex=>'', ttype=>"UNARY", func=>"true" },
+"coversin" => { tag=>"mo", output=>"coversin", tex=>'', ttype=>"UNARY", func=>"true" },
+"exsec" => { tag=>"mo", output=>"exsec", tex=>'', ttype=>"UNARY", func=>"true" },
+"excsc" => { tag=>"mo", output=>"excsc", tex=>'', ttype=>"UNARY", func=>"true" },
+
 # arrows
 "uarr" => { tag=>"mo", output=>"&#x2191;", tex=>"uparrow", ttype=>"CONST" },
 "darr" => { tag=>"mo", output=>"&#x2193;", tex=>"downarrow", ttype=>"CONST" },
 "rarr" => { tag=>"mo", output=>"&#x2192;", tex=>"rightarrow", ttype=>"CONST" },
 "->" => { tag=>"mo", output=>"&#x2192;", tex=>"to", ttype=>"CONST", latex=>1 },
+"→" => { tag=>"mo", output=>"&#x2192;", tex=>"to", ttype=>"CONST", latex=>1 },
 "|->" => { tag=>"mo", output=>"&#x21A6;", tex=>"mapsto", ttype=>"CONST" },
 "larr" => { tag=>"mo", output=>"&#x2190;", tex=>"leftarrow", ttype=>"CONST" },
 "harr" => { tag=>"mo", output=>"&#x2194;", tex=>"leftrightarrow", ttype=>"CONST" },
@@ -863,6 +925,7 @@ sub _parseExpr : method {
     my $newFrag = $self->_createDocumentFragment();
     my ($node, $input, $symbol);
     do {
+	$str = _replaceUniSuperSubScripts($str);
 	$str = _removeCharsAndBlanks($str, 0);
 	($node, $str) = $self->_parseIexpr($str);
 	($input, $symbol) = $self->_getSymbol($str);
@@ -1296,6 +1359,69 @@ sub _removeCharsAndBlanks {
 		    substr($str, $n) =~ /^\\[^\\ ,!]/ ? $n+1 : $n);
     $st =~ s/^[\x00-\x20]+//;
     return $st;
+}
+
+BEGIN {
+my %UnicodeSuperscripts = (
+"⁰" => "0",
+"¹" => "1",
+"²" => "2",
+"³" => "3",
+"⁴" => "4",
+"⁵" => "5",
+"⁶" => "6",
+"⁷" => "7",
+"⁸" => "8",
+"⁹" => "9",
+"⁺" => "+",
+"⁻" => "-",
+"⁼" => "=",
+"⁽" => "(",
+"⁾" => ")",
+"ⁿ" => "n",
+);
+
+my %UnicodeSubscripts = (
+"₀" => "0",
+"₁" => "1",
+"₂" => "2",
+"₃" => "3",
+"₄" => "4",
+"₅" => "5",
+"₆" => "6",
+"₇" => "7",
+"₈" => "8",
+"₉" => "9",
+"₊" => "+",
+"₋" => "-",
+"₌" => "=",
+"₍" => "(",
+"₎" => ")",
+);
+
+my $UnicodeSupRE = join '|', keys %UnicodeSuperscripts;
+my $UnicodeSubRE = join '|', keys %UnicodeSubscripts;
+
+# Replaces Unicode superscripts and subscripts with corresponding
+# ASCIIMathML syntax
+# Arguments: string
+# Returns:   resultant string
+sub _replaceUniSuperSubScripts {
+    my ($s) = @_;
+    $s =~ s@(($UnicodeSupRE)+)@
+        my $repl = $1;
+        $repl =~ s/($UnicodeSupRE)/$UnicodeSuperscripts{$1}/eg;
+        (length $repl) > 1 ? "^($repl)" : "^$repl";
+    @egs;
+
+    $s =~ s@(($UnicodeSubRE)+)@
+        my $repl = $1;
+        $repl =~ s/($UnicodeSubRE)/$UnicodeSubscripts{$1}/eg;
+        (length $repl) > 1 ? "_($repl)" : "_$repl";
+    @egs;
+
+    return $s;
+}
 }
 
 # Removes outermost parenthesis
